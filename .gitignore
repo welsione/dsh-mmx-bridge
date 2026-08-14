@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Logs & runtime artifacts
+*.log
+/tmp/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local overrides
+.env
+.env.local
