@@ -1,0 +1,16 @@
+# Mount the dsh-mmx-bridge package (tool plugin + built-in client
+# enhancement) into a DSH profile.
+
+# 1. Install the package into your profile (packages/ + node_modules link):
+#      mkdir -p ~/.dsh/profiles/<profile>/packages
+#      cp -R . ~/.dsh/profiles/<profile>/packages/dsh-mmx-bridge
+#      ln -s ../packages/dsh-mmx-bridge ~/.dsh/profiles/<profile>/node_modules/dsh-mmx-bridge
+#
+# 2. Append this row to your profile's cordis.patch.yml (top-level array),
+#    then restart the dsh process:
+- insert:
+    - id: mmx-bridge
+      name: dsh-mmx-bridge
+
+# The client enhancement (inline players) loads automatically via the
+# package's dsh.client declaration — refresh the Web GUI page after boot.
