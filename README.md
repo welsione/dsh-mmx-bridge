@@ -38,9 +38,13 @@
 
 ## 安装
 
-将下面的提示词复制给你的 AI 助手（Agent），它会按照 [AGENT.md](AGENT.md) 完成安装：
+将下面的提示词**整段**复制给你的 AI 助手（Agent），它会按仓库内的 [AGENT.md](AGENT.md) 完成安装、挂载与验证：
 
-> 请阅读仓库根目录的 AGENT.md 文档，按照其中的步骤，在当前 DSH profile 中完成 dsh-mmx-bridge 插件的安装、挂载与验证。
+> 帮我安装 DSH（DeepSeek Harness）插件 dsh-mmx-bridge，仓库地址：https://github.com/welsione/dsh-mmx-bridge
+> 1. 先读取该仓库根目录的 AGENT.md 安装指南（raw 链接：https://raw.githubusercontent.com/welsione/dsh-mmx-bridge/main/AGENT.md ），严格按其中「安装步骤」与「免重启验证」执行，不要跳步。
+> 2. 安装目标是我当前使用的 DSH profile；无法确定时，列出 `~/.dsh/profiles/` 下的 profile 向我确认（Web GUI 场景通常是 `web`）。
+> 3. 优先执行 `dsh plugin --profile <profile> add dsh-mmx-bridge`（安装后自动挂载，无需再手动改 `cordis.patch.yml`）；npm 源不可用时改用 `github:welsione/dsh-mmx-bridge`。
+> 4. 免重启验证全部通过即安装完成；**不要重启 DSH**，把 AGENT.md 第 5 节「重启与重启后验证」清单转给我执行。
 
 ## 相关
 

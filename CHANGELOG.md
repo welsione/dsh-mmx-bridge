@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.2] - 2026-08-16
+
+### Fixed
+
+- README 安装提示词自包含：内置仓库地址与 AGENT.md raw 链接、profile 确认方式、安装与验证要点——客服/用户直接复制即可，接收方 Agent 不再缺上下文
+- AGENT.md 重写为可执行流程：区分 `dsh plugin` 自动挂载（声明 `dsh.bundle.patch`）与手动安装两条路径；明确**自动挂载后不得再手动添加挂载行**（loader insert 不按 id 去重，会挂载两次）
+- AGENT.md 免重启验证四件套（包存在 / 服务端语法 / 客户端语法 / bundles 列表），Agent 无需重启即可确认安装成功；「重启」明确移交用户执行
+- 修复手动安装示例符号链接指向旧包名 `dsh-mmx-multimodal` 的错误（应为 `dsh-mmx-bridge`）
+- 前置条件补充 pnpm 检查（`dsh plugin` 即 pnpm 转发）与 profile 发现步骤；故障排查补充 pnpm 缺失 / EPERM 沙箱 / 重复挂载条目
+- AGENTS.md 修正：路径仅经 `MMX_*` 环境变量配置（补丁层 loader entry 无 `ctx.config`）
+
 ## [1.0.1] - 2026-08-16
 
 ### Fixed

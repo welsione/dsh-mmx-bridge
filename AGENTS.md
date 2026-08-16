@@ -43,7 +43,8 @@ renderer and a MutationObserver-based inline player enhancer.
 - It uses `node:child_process`, not `ctx.subprocess` (patch-layer contexts
   suspend that service).
 - Tool descriptions are Chinese by default.
-- All paths are configurable via row `config` or `MMX_*` env vars.
+- All paths are configurable via `MMX_*` env vars only — patch-layer loader
+  entries get no `ctx.config`, so do not read it in this plugin.
 - The client bundle is plain ESM loaded by the browser's `__ModuleLoader__`
   (factory(require) pattern, React via require).
 

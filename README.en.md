@@ -38,9 +38,13 @@ Generated files are served same-origin at `/mmx-files/` (with Range support); th
 
 ## Install
 
-Copy the prompt below to your AI assistant (agent) — it will follow [AGENT.md](AGENT.md) to install:
+Copy the prompt below (**the whole block**) to your AI assistant (agent) — it will follow [AGENT.md](AGENT.md) to install, mount and verify:
 
-> Please read the AGENT.md at the repository root and follow its steps to install, mount and verify the dsh-mmx-bridge plugin in the current DSH profile.
+> Help me install the DSH (DeepSeek Harness) plugin dsh-mmx-bridge, repository: https://github.com/welsione/dsh-mmx-bridge
+> 1. First read AGENT.md at the repository root (raw link: https://raw.githubusercontent.com/welsione/dsh-mmx-bridge/main/AGENT.md ) and follow its "安装步骤" (install steps) and "免重启验证" (no-restart verification) sections exactly — do not skip steps.
+> 2. Install into the DSH profile I currently use; if unclear, list the profiles under `~/.dsh/profiles/` and ask me (`web` is typical for the Web GUI).
+> 3. Prefer `dsh plugin --profile <profile> add dsh-mmx-bridge` (auto-mounts after install; do NOT also edit `cordis.patch.yml`); if the npm registry is unreachable, use `github:welsione/dsh-mmx-bridge`.
+> 4. Installation is done once the no-restart checks pass; do **not** restart DSH — hand me the "重启与重启后验证" (restart & post-restart) checklist from AGENT.md section 5.
 
 ## Related
 
