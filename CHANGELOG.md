@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - 2026-08-16
+
+### Fixed
+
+- 声明 `dsh.bundle` manifest（`cordis.patch.yml`），满足 `dsh plugin add` 的安装前提；patch 文件随 npm 包分发（`files` 列表补充）
+
 ## [1.0.0] - 2026-08-15
 
 首个正式发布。
