@@ -2,6 +2,11 @@
 
 ## [1.0.2] - 2026-08-16
 
+### Features
+
+- 内置管理面板：设置 → 插件 → 插件配置 出现 `dsh-mmx-bridge` 卡片（启停 / 生成数量 / `web_search` / `read_image` 开关），任何机器安装后即可配置，无需额外插件
+- 新增管理路由：`GET /api/mmx-bridge/status`、`POST /api/mmx-bridge/set-enabled`（路径可用环境变量 `MMX_STATUS_PATH` / `MMX_SET_ENABLED_PATH` 覆盖）
+
 ### Fixed
 
 - README 安装提示词自包含：内置仓库地址与 AGENT.md raw 链接、profile 确认方式、安装与验证要点——客服/用户直接复制即可，接收方 Agent 不再缺上下文

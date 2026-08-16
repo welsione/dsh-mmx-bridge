@@ -150,7 +150,7 @@ dsh plugin --profile web up dsh-mmx-bridge   # 或 cd ~/.dsh/profiles/web && pnp
 - `webSearchEnabled`：接管 `web_search`（mmx 版搜索）
 - `readImageEnabled`：接管 `read_image`（VLM 文字描述，适合模型不支持图像输入的场合）
 
-开关也可在 Web GUI **设置 → 插件 → 插件配置** 中操作（会写控制文件）。
+开关也可在 Web GUI **设置 → 插件 → 插件配置** 中操作（1.0.2+ 内置管理面板卡片，直接随包提供，会写控制文件；无需额外安装面板插件）。
 
 ## 8. 产物与 URL
 
