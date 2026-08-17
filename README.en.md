@@ -61,6 +61,11 @@ For the auto-mount path, the mount entry is removed as well. If you installed ma
 - Developed and verified on **DSH 0.1.0-rc.6** (Web GUI profile). Auto-mounting via `dsh.bundle.patch` depends on `dsh plugin` subcommand behavior, so version differences may affect install steps — defer to [AGENT.md](AGENT.md).
 - **Zero npm runtime dependencies** (Node builtins only). Tool calls depend on the external `mmx-cli` (`npm install -g mmx-cli` + `mmx auth login`).
 
+## MiniMax Token Plan
+
+Subscribe to the MiniMax Token Plan to unlock the latest models (1M long context / native multimodal) with a shared quota across text, image, audio and video. Friends subscribing through the invite link get 10% off + Builder benefits, and the inviter earns a 10% rebate:
+https://platform.minimaxi.com/subscribe/token-plan?code=DyJpmqeNsk&source=link
+
 ## Related
 
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) · [MiniMax CLI](https://github.com/MiniMax-AI/cli) · [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins)

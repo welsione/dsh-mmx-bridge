@@ -61,6 +61,11 @@ dsh plugin --profile web rm dsh-mmx-bridge
 - 在 **DSH 0.1.0-rc.6**（Web GUI profile）上开发与验证；`dsh.bundle.patch` 自动挂载依赖 `dsh plugin` 的子命令行为，版本差异可能影响安装步骤，以 [AGENT.md](AGENT.md) 为准。
 - 运行时**零 npm 依赖**（仅使用 Node 内置模块），工具调用依赖外部 `mmx-cli`（`npm install -g mmx-cli` + `mmx auth login`）。
 
+## MiniMax Token Plan
+
+使用 MiniMax Token Plan 解锁最新模型（1M 超长上下文 / 原生多模态），图文音视频共用套餐额度；好友通过邀请链接订阅享 9 折 + Builder 权益，邀请人得 10% 返利：
+https://platform.minimaxi.com/subscribe/token-plan?code=DyJpmqeNsk&source=link
+
 ## 相关
 
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) · [MiniMax CLI](https://github.com/MiniMax-AI/cli) · [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins)
