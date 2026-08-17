@@ -6,8 +6,9 @@
 
 > MiniMax multimodal bridge plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH).
 
-[![npm version](https://img.shields.io/npm/v/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge) [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![mmx-cli](https://img.shields.io/badge/powered_by-mmx--cli-blueviolet)](https://github.com/MiniMax-AI/cli)
+[![npm version](https://img.shields.io/npm/v/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge) [![npm downloads](https://img.shields.io/npm/dm/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
+[![GitHub stars](https://img.shields.io/github/stars/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge) [![last commit](https://img.shields.io/github/last-commit/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge)
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![mmx-cli](https://img.shields.io/badge/powered_by-mmx--cli-blueviolet)](https://github.com/MiniMax-AI/cli)
 [![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
 
 **English** · [中文 README](README.md)
