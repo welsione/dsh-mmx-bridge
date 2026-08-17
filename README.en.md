@@ -90,6 +90,12 @@ Verify DSH version ≥ 0.1.0-rc.6 and mmx-cli is installed (`mmx --version`). Re
 </details>
 
 <details>
+<summary><b>Q: Don't see the dsh-mmx-bridge card in Settings → Plugins → Plugin config?</b></summary>
+
+Since DSH rc.7, the settings page dispatches cards by the server-registered settings namespace, so **plugin ≥ 1.0.4 is required** (1.0.4 registers the `dsh-mmx-bridge` namespace). Confirm the installed version is ≥ 1.0.4, **restart dsh** (server-side ESM cache does not hot-reload), then hard-refresh the Web GUI page.
+</details>
+
+<details>
 <summary><b>Q: "API key not found" when generating images?</b></summary>
 
 Run `mmx auth login` first. If using Token Plan, ensure your subscription is active.

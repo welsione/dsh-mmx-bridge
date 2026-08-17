@@ -48,6 +48,12 @@
     "plugin",
     "ai-agent"
   ],
+  "peerDependencies": {
+    "@deepseek-ai/dsh-settings": "^0.1.0-rc.6"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
   "engines": {
     "node": ">=18"
   }
