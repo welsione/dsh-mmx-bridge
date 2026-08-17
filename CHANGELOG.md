@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.3] - 2026-08-16
+
+### Fixed
+
+- 设置页管理卡片支持折叠/展开（可点击头部、chevron 指示、展开态高亮），与 dsh-plugin-manager 原 card 交互一致
+
 ## [1.0.2] - 2026-08-16
 
 ### Features

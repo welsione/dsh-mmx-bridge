@@ -1,7 +1,7 @@
 {
   "name": "dsh-mmx-bridge",
   "private": false,
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "MiniMax multimodal bridge for DeepSeek Harness (DSH). One mmx_bridge tool covers describe/image/video/speech/music/cover/search/quota; optional web_search/read_image takeover; built-in client enhancement renders inline players/previews plus a settings-page management card in the Web GUI.",
   "main": "./lib/index.js",
   "exports": {
