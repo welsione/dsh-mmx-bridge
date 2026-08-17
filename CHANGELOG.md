@@ -10,6 +10,7 @@
   - `package.json`：补充依赖声明 —— `@deepseek-ai/dsh-settings`（peerDependencies，宿主 DSH 提供）、`@deepseek-ai/schemastery`（dependencies，始终需要）；模式与官方插件 `@deepseek-ai/dsh-agent-loop` 一致
 - README（zh/en）图片改为绝对 GitHub 链接（`github.com/welsione/dsh-mmx-bridge/raw/main/docs/*.png`）：此前为相对路径 `docs/*.png`，npm 页面与部分渲染环境无法解析导致图片不显示；npm 包 `files` 不含 `docs/`，改绝对链接后 GitHub/npm 均可正常展示
 - README 内 [AGENT.md] 链接改为绝对 blob 地址（`github.com/welsione/dsh-mmx-bridge/blob/main/AGENT.md`），避免在非 GitHub 渲染环境下点不到
+- README（zh/en）「快速开始」新增**复制给 Agent 的安装提示词**（内嵌仓库地址与安装命令，客户直接粘贴给自己的 Agent 即可）；并修正安装说明：装完需**重启 dsh**（服务端 ESM 缓存不热替换），此前误写「无需重启」
 
 ## [1.0.3] - 2026-08-16
 
