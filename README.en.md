@@ -41,7 +41,15 @@ dsh plugin --profile web add dsh-mmx-bridge
 
 > ⚠️ npm unreachable? Use `dsh plugin --profile web add github:welsione/dsh-mmx-bridge`
 
-No restart needed — just refresh the Web GUI. See [AGENT.md](https://github.com/welsione/dsh-mmx-bridge/blob/main/AGENT.md) for details.
+**Restart dsh** after installing (server-side ESM cache does not hot-reload), then refresh the Web GUI. See [AGENT.md](https://github.com/welsione/dsh-mmx-bridge/blob/main/AGENT.md) for details.
+
+#### Have your agent install it (paste this prompt to your agent)
+
+```text
+Install the DSH plugin dsh-mmx-bridge for me (repo https://github.com/welsione/dsh-mmx-bridge ):
+
+Run `dsh plugin --profile web add dsh-mmx-bridge` to install into the web GUI profile; if npm is unreachable, use `dsh plugin --profile web add github:welsione/dsh-mmx-bridge` instead. Verify the plugin is mounted after installing, then remind me to restart dsh (the settings-page card only appears after a restart).
+```
 
 ### Uninstall
 

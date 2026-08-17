@@ -41,7 +41,15 @@ dsh plugin --profile web add dsh-mmx-bridge
 
 > ⚠️ npm 不通？改用 `dsh plugin --profile web add github:welsione/dsh-mmx-bridge`
 
-安装后**无需重启**，刷新 Web GUI 即可使用。详见 [AGENT.md](https://github.com/welsione/dsh-mmx-bridge/blob/main/AGENT.md)。
+安装后**重启 dsh**（服务端 ESM 缓存不热替换），再刷新 Web GUI 即可使用。详见 [AGENT.md](https://github.com/welsione/dsh-mmx-bridge/blob/main/AGENT.md)。
+
+#### 让 Agent 帮你装（复制给 Agent 的提示词）
+
+```text
+帮我安装 DSH 插件 dsh-mmx-bridge（仓库 https://github.com/welsione/dsh-mmx-bridge ）：
+
+执行 `dsh plugin --profile web add dsh-mmx-bridge` 装到 web GUI profile；npm 拉不动就改用 `dsh plugin --profile web add github:welsione/dsh-mmx-bridge`。装完验证插件已挂载，并提醒我重启 dsh（设置页管理卡片需重启才生效）。
+```
 
 ### 卸载
 
