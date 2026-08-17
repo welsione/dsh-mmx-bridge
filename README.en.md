@@ -107,7 +107,7 @@ MiniMax video generation has queue limits;高峰期间 may take longer. Check `m
 |:--|:--|
 | [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | The DSH agent framework |
 | [MiniMax CLI](https://github.com/MiniMax-AI/cli) | MiniMax official CLI |
-| [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins) | DSH plugin ecosystem radar (this plugin included) |
+| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | DSH plugin curated list (this plugin included) |
 | [dsh-recommend](https://github.com/zp-home/dsh-recommend) | DSH plugin rankings (this plugin included) |
 
 ## Contributing
