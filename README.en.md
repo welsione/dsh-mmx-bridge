@@ -59,30 +59,6 @@ dsh plugin --profile web rm dsh-mmx-bridge
 | :--: | :--: |
 | ![vision demo](docs/vision-demo.png) | ![plugin settings](docs/plugin-settings.png) |
 
-## Usage
-
-Just chat naturally in DSH — no extra config needed:
-
-```
-You: Draw me a cyberpunk cat
-AI:  [calls mmx_bridge(action="image", prompt="cyberpunk cat") → inline image]
-
-You: What's in this image?
-AI:  [calls mmx_bridge(action="describe", image="...") → text description]
-
-You: Say welcome in a sweet voice
-AI:  [calls mmx_bridge(action="speech", text="Welcome!", voice="...") → audio player]
-
-You: Make a 10-second video
-AI:  [calls mmx_bridge(action="video", prompt="...", duration=10) → video player]
-
-You: Write me a Chinese rap song
-AI:  [calls mmx_bridge(action="music", lyrics="[Verse]...") → audio]
-
-You: Search for latest AI news
-AI:  [calls mmx_bridge(action="search", q="AI news today") → live results]
-```
-
 ## Architecture
 
 ```
@@ -131,8 +107,7 @@ MiniMax video generation has queue limits;高峰期间 may take longer. Check `m
 |:--|:--|
 | [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | The DSH agent framework |
 | [MiniMax CLI](https://github.com/MiniMax-AI/cli) | MiniMax official CLI |
-| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | DSH plugin curated list (this plugin included) |
-| [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins) | DSH plugin ecosystem radar (not yet included) |
+| [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins) | DSH plugin ecosystem radar (this plugin included) |
 | [dsh-recommend](https://github.com/zp-home/dsh-recommend) | DSH plugin rankings (this plugin included) |
 
 ## Contributing
