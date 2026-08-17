@@ -4,29 +4,50 @@
 
 # dsh-mmx-bridge
 
-> MiniMax multimodal bridge plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH).
+> **One tool = all MiniMax multimodal capabilities.** Give DeepSeek Harness (DSH) the ability to see images, generate art, create videos, speak, sing, search the web, and more.
 
-[![npm version](https://img.shields.io/npm/v/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge) [![npm downloads](https://img.shields.io/npm/dm/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
-[![GitHub stars](https://img.shields.io/github/stars/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge) [![last commit](https://img.shields.io/github/last-commit/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge)
-[![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![mmx-cli](https://img.shields.io/badge/powered_by-mmx--cli-blueviolet)](https://github.com/MiniMax-AI/cli)
+[![npm version](https://img.shields.io/npm/v/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
+[![npm downloads](https://img.shields.io/npm/dm/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
+[![GitHub stars](https://img.shields.io/github/stars/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge)
+[![DSH version](https://img.shields.io/badge/DSH-0.1.0--rc.6+-brightgreen)](https://github.com/deepseek-ai/deepseek-harness)
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
+[![minimax](https://img.shields.io/badge/power_minimax--cli-blueviolet)](https://github.com/MiniMax-AI/cli)
 
-**English** · [中文 README](README.md)
+English · [中文 README](README.md)
 
-## Features
+---
 
-One `mmx_bridge` tool covering MiniMax's whole multimodal stack:
+## Why?
 
-- **Image understanding** (describe) · **Text-to-image** (image)
-- **Video generation** (video) · **Text-to-speech** (speech)
-- **Music generation** (music) · **Audio cover** (cover)
-- **Web search** (search) · **Usage quota** (quota)
-
-Generated files are served same-origin at `/mmx-files/` (with Range support); the conversation renders inline image previews and audio/video players, and results carry playable URLs.
+DSH is text-only by default — **no images, no speech, no video**. `dsh-mmx-bridge` plugs in MiniMax's full multimodal stack through a single `mmx_bridge` tool. Install once, get 8 capabilities:
 
 <p align="center">
   <img src="docs/features.png" alt="feature overview" width="90%" />
 </p>
+
+## Quick Start
+
+### Prerequisites
+
+1. [DSH](https://github.com/deepseek-ai/deepseek-harness) v0.1.0-rc.6+
+2. [mmx-cli](https://github.com/MiniMax-AI/cli) installed & logged in: `npm i -g mmx-cli && mmx auth login`
+
+### Install
+
+```bash
+dsh plugin --profile web add dsh-mmx-bridge
+```
+
+> ⚠️ npm unreachable? Use `dsh plugin --profile web add github:welsione/dsh-mmx-bridge`
+
+No restart needed — just refresh the Web GUI. See [AGENT.md](AGENT.md) for details.
+
+### Uninstall
+
+```bash
+dsh plugin --profile web rm dsh-mmx-bridge
+```
 
 ## Screenshots
 
@@ -38,38 +59,100 @@ Generated files are served same-origin at `/mmx-files/` (with Range support); th
 | :--: | :--: |
 | ![vision demo](docs/vision-demo.png) | ![plugin settings](docs/plugin-settings.png) |
 
-## Install
+## Usage
 
-Copy the prompt below (**the whole block**) to your AI assistant (agent) — it will follow [AGENT.md](AGENT.md) to install, mount and verify:
+Just chat naturally in DSH — no extra config needed:
 
-> Help me install the DSH (DeepSeek Harness) plugin dsh-mmx-bridge, repository: https://github.com/welsione/dsh-mmx-bridge
-> 1. First read AGENT.md at the repository root (raw link: https://raw.githubusercontent.com/welsione/dsh-mmx-bridge/main/AGENT.md ) and follow its "安装步骤" (install steps) and "免重启验证" (no-restart verification) sections exactly — do not skip steps.
-> 2. Install into the DSH profile I currently use; if unclear, list the profiles under `~/.dsh/profiles/` and ask me (`web` is typical for the Web GUI).
-> 3. Prefer `dsh plugin --profile <profile> add dsh-mmx-bridge` (auto-mounts after install; do NOT also edit `cordis.patch.yml`); if the npm registry is unreachable, use `github:welsione/dsh-mmx-bridge`.
-> 4. Installation is done once the no-restart checks pass; do **not** restart DSH — hand me the "重启与重启后验证" (restart & post-restart) checklist from AGENT.md section 5.
+```
+You: Draw me a cyberpunk cat
+AI:  [calls mmx_bridge(action="image", prompt="cyberpunk cat") → inline image]
 
-## Uninstall
+You: What's in this image?
+AI:  [calls mmx_bridge(action="describe", image="...") → text description]
 
-```bash
-dsh plugin --profile web rm dsh-mmx-bridge
+You: Say welcome in a sweet voice
+AI:  [calls mmx_bridge(action="speech", text="Welcome!", voice="...") → audio player]
+
+You: Make a 10-second video
+AI:  [calls mmx_bridge(action="video", prompt="...", duration=10) → video player]
+
+You: Write me a Chinese rap song
+AI:  [calls mmx_bridge(action="music", lyrics="[Verse]...") → audio]
+
+You: Search for latest AI news
+AI:  [calls mmx_bridge(action="search", q="AI news today") → live results]
 ```
 
-For the auto-mount path, the mount entry is removed as well. If you installed manually (cloned into `packages/` plus a manual mount line), also delete `~/.dsh/profiles/web/packages/dsh-mmx-bridge/` and the `- id: mmx-bridge` line in `cordis.patch.yml`, then restart DSH.
+## Architecture
+
+```
+User chat → DSH Agent → mmx_bridge tool → mmx-cli → MiniMax API
+                                                  ↓
+                                            /mmx-files/ (same-origin)
+                                            (image preview / audio & video players)
+```
+
+- **Zero npm runtime dependencies** — Node.js builtins only
+- **Same-origin media** — generated files served via `/mmx-files/` with inline preview
+- **Web GUI enhancement** — image preview, audio/video players, settings card auto-load
 
 ## Compatibility
 
-- Developed and verified on **DSH 0.1.0-rc.6** (Web GUI profile). Auto-mounting via `dsh.bundle.patch` depends on `dsh plugin` subcommand behavior, so version differences may affect install steps — defer to [AGENT.md](AGENT.md).
-- **Zero npm runtime dependencies** (Node builtins only). Tool calls depend on the external `mmx-cli` (`npm install -g mmx-cli` + `mmx auth login`).
+| Item | Details |
+|:--|:--|
+| DSH version | 0.1.0-rc.6+ (Web GUI profile) |
+| Runtime deps | Zero npm deps (Node builtins) |
+| External deps | [mmx-cli](https://github.com/MiniMax-AI/cli) (at call time) |
+| OS | macOS / Linux / Windows (Node.js 18+) |
 
-## MiniMax Token Plan
+## FAQ
 
-Subscribe to the MiniMax Token Plan to unlock the latest models (1M long context / native multimodal) with a shared quota across text, image, audio and video. Friends subscribing through the invite link get 10% off + Builder benefits, and the inviter earns a 10% rebate:
-https://platform.minimaxi.com/subscribe/token-plan?code=DyJpmqeNsk&source=link
+<details>
+<summary><b>Q: Don't see the mmx_bridge tool after install?</b></summary>
+
+Verify DSH version ≥ 0.1.0-rc.6 and mmx-cli is installed (`mmx --version`). Refresh the Web GUI page.
+</details>
+
+<details>
+<summary><b>Q: "API key not found" when generating images?</b></summary>
+
+Run `mmx auth login` first. If using Token Plan, ensure your subscription is active.
+</details>
+
+<details>
+<summary><b>Q: Video generation fails?</b></summary>
+
+MiniMax video generation has queue limits;高峰期间 may take longer. Check `mmx quota` for balance.
+</details>
 
 ## Related
 
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) · [MiniMax CLI](https://github.com/MiniMax-AI/cli) · [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins)
+| Project | Description |
+|:--|:--|
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | The DSH agent framework |
+| [MiniMax CLI](https://github.com/MiniMax-AI/cli) | MiniMax official CLI |
+| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | DSH plugin curated list (this plugin included) |
+| [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins) | DSH plugin ecosystem radar (not yet included) |
+| [dsh-recommend](https://github.com/zp-home/dsh-recommend) | DSH plugin rankings (this plugin included) |
+
+## Contributing
+
+PRs and issues welcome.
+
+```bash
+git clone https://github.com/welsione/dsh-mmx-bridge.git
+cd dsh-mmx-bridge
+npm install
+npm run build
+dsh plugin --profile web add .   # local install for testing
+```
 
 ## License
 
 [MIT](LICENSE)
+
+---
+
+<p align="center">
+  If this plugin helps you, please consider giving it a ⭐ Star!
+</p>

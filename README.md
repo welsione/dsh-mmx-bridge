@@ -4,29 +4,50 @@
 
 # dsh-mmx-bridge
 
-> [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）的 MiniMax 多模态桥接插件。
+> **一个工具 = MiniMax 全部多模态能力。** 让 DeepSeek Harness（DSH）的纯文本模型直接看图、画图、生成视频、说话、唱歌、翻唱、搜索、查额度。
 
-[![npm version](https://img.shields.io/npm/v/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge) [![npm downloads](https://img.shields.io/npm/dm/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
-[![GitHub stars](https://img.shields.io/github/stars/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge) [![last commit](https://img.shields.io/github/last-commit/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge)
-[![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE) [![mmx-cli](https://img.shields.io/badge/powered_by-mmx--cli-blueviolet)](https://github.com/MiniMax-AI/cli)
+[![npm version](https://img.shields.io/npm/v/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
+[![npm downloads](https://img.shields.io/npm/dm/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
+[![GitHub stars](https://img.shields.io/github/stars/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge)
+[![DSH version](https://img.shields.io/badge/DSH-0.1.0--rc.6+-brightgreen)](https://github.com/deepseek-ai/deepseek-harness)
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
+[![minimax](https://img.shields.io/badge/power_minimax--cli-blueviolet)](https://github.com/MiniMax-AI/cli)
 
-**English** · [English README](README.en.md)
+[English](README.en.md) · 简体中文
 
-## 功能
+---
 
-一个 `mmx_bridge` 工具，覆盖 MiniMax 全部多模态能力：
+## 为什么需要这个？
 
-- **图片理解**（describe）· **文生图**（image）
-- **视频生成**（video）· **语音合成**（speech）
-- **音乐生成**（music）· **音频翻唱**（cover）
-- **联网搜索**（search）· **用量查询**（quota）
-
-生成产物经 `/mmx-files/` 同源提供（支持 Range），对话流直接内嵌图片预览与音视频播放器，结果携带可播放 URL。
+DSH 默认只支持纯文本对话——**看不了图、画不了画、说不了话、做不了视频**。`dsh-mmx-bridge` 通过一个 `mmx_bridge` 工具接入 MiniMax 全栈多模态模型，一次安装，8 种能力即开即用：
 
 <p align="center">
   <img src="docs/features.png" alt="feature overview" width="90%" />
 </p>
+
+## 快速开始
+
+### 前置条件
+
+1. 已安装 [DSH](https://github.com/deepseek-ai/deepseek-harness)（v0.1.0-rc.6+）
+2. 已安装 [mmx-cli](https://github.com/MiniMax-AI/cli) 并登录：`npm i -g mmx-cli && mmx auth login`
+
+### 一条命令安装
+
+```bash
+dsh plugin --profile web add dsh-mmx-bridge
+```
+
+> ⚠️ npm 不通？改用 `dsh plugin --profile web add github:welsione/dsh-mmx-bridge`
+
+安装后**无需重启**，刷新 Web GUI 即可使用。详见 [AGENT.md](AGENT.md)。
+
+### 卸载
+
+```bash
+dsh plugin --profile web rm dsh-mmx-bridge
+```
 
 ## 效果展示
 
@@ -38,38 +59,106 @@
 | :--: | :--: |
 | ![vision demo](docs/vision-demo.png) | ![plugin settings](docs/plugin-settings.png) |
 
-## 安装
+## 在 DSH 中使用
 
-将下面的提示词**整段**复制给你的 AI 助手（Agent），它会按仓库内的 [AGENT.md](AGENT.md) 完成安装、挂载与验证：
+安装后直接在对话中使用，无需额外配置：
 
-> 帮我安装 DSH（DeepSeek Harness）插件 dsh-mmx-bridge，仓库地址：https://github.com/welsione/dsh-mmx-bridge
-> 1. 先读取该仓库根目录的 AGENT.md 安装指南（raw 链接：https://raw.githubusercontent.com/welsione/dsh-mmx-bridge/main/AGENT.md ），严格按其中「安装步骤」与「免重启验证」执行，不要跳步。
-> 2. 安装目标是我当前使用的 DSH profile；无法确定时，列出 `~/.dsh/profiles/` 下的 profile 向我确认（Web GUI 场景通常是 `web`）。
-> 3. 优先执行 `dsh plugin --profile <profile> add dsh-mmx-bridge`（安装后自动挂载，无需再手动改 `cordis.patch.yml`）；npm 源不可用时改用 `github:welsione/dsh-mmx-bridge`。
-> 4. 免重启验证全部通过即安装完成；**不要重启 DSH**，把 AGENT.md 第 5 节「重启与重启后验证」清单转给我执行。
+```
+你：帮我画一只赛博朋克风格的猫
+AI：[调用 mmx_bridge(action="image", prompt="cyberpunk cat") → 图片内嵌显示]
 
-## 卸载
+你：读一下这张图
+AI：[调用 mmx_bridge(action="describe", image="...") → 文字描述]
 
-```bash
-dsh plugin --profile web rm dsh-mmx-bridge
+你：用甜美女声说一段欢迎词
+AI：[调用 mmx_bridge(action="speech", text="欢迎来到我的频道", voice="...") → 音频播放器]
+
+你：帮我做个 10 秒视频
+AI：[调用 mmx_bridge(action="video", prompt="...", duration=10) → 视频播放器]
+
+你：写一首中文说唱
+AI：[调用 mmx_bridge(action="music", lyrics="[Verse]...[Chorus]...") → 音频]
+
+你：搜索最新的 AI 新闻
+AI：[调用 mmx_bridge(action="search", q="AI news today") → 实时结果]
 ```
 
-自动挂载路径会随之移除挂载行。若当初用的是手动安装（克隆到 `packages/` + 手动挂载行），需额外删除 `~/.dsh/profiles/web/packages/dsh-mmx-bridge/` 目录与 `cordis.patch.yml` 中的 `- id: mmx-bridge` 行，再重启 DSH。
+## 架构
+
+```
+用户对话 → DSH Agent → mmx_bridge 工具 → mmx-cli → MiniMax API
+                                                  ↓
+                                            /mmx-files/ 同源服务
+                                            （图片预览 / 音视频播放器）
+```
+
+- **零 npm 运行时依赖**：仅使用 Node.js 内置模块
+- **同源产物服务**：生成的文件经 `/mmx-files/` 路径直接内嵌在对话中，支持 Range 请求
+- **Web GUI 增强**：图片预览、音频/视频播放器、设置页管理卡片自动加载
 
 ## 兼容性
 
-- 在 **DSH 0.1.0-rc.6**（Web GUI profile）上开发与验证；`dsh.bundle.patch` 自动挂载依赖 `dsh plugin` 的子命令行为，版本差异可能影响安装步骤，以 [AGENT.md](AGENT.md) 为准。
-- 运行时**零 npm 依赖**（仅使用 Node 内置模块），工具调用依赖外部 `mmx-cli`（`npm install -g mmx-cli` + `mmx auth login`）。
+| 项目 | 说明 |
+|:--|:--|
+| DSH 版本 | 0.1.0-rc.6+（Web GUI profile） |
+| 运行时依赖 | 零 npm 依赖（Node 内置模块） |
+| 外部依赖 | [mmx-cli](https://github.com/MiniMax-AI/cli)（工具调用时） |
+| OS | macOS / Linux / Windows（需 Node.js 18+） |
 
-## MiniMax Token Plan
+## 常见问题
 
-使用 MiniMax Token Plan 解锁最新模型（1M 超长上下文 / 原生多模态），图文音视频共用套餐额度；好友通过邀请链接订阅享 9 折 + Builder 权益，邀请人得 10% 返利：
-https://platform.minimaxi.com/subscribe/token-plan?code=DyJpmqeNsk&source=link
+<details>
+<summary><b>Q: 安装后看不到 mmx_bridge 工具？</b></summary>
 
-## 相关
+确认 DSH 版本 ≥ 0.1.0-rc.6，且 `mmx-cli` 已安装（`mmx --version`）。刷新 Web GUI 页面后重试。
+</details>
 
-[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) · [MiniMax CLI](https://github.com/MiniMax-AI/cli) · [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins)
+<details>
+<summary><b>Q: 图片生成报错 "API key not found"？</b></summary>
+
+需要先运行 `mmx auth login` 登录 MiniMax 账号。如果使用 Token Plan，确保套餐有效。
+</details>
+
+<details>
+<summary><b>Q: 视频生成失败？</b></summary>
+
+MiniMax 视频生成有队列限制，高峰期可能需要等待。检查 `mmx quota` 确认额度充足。
+</details>
+
+<details>
+<summary><b>Q: 国内网络无法访问？</b></summary>
+
+mmx-cli 直连 MiniMax API（api.minimax.chat），国内一般可直连。如遇问题检查代理设置。
+</details>
+
+## 相关项目
+
+| 项目 | 说明 |
+|:--|:--|
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | DSH 本体 —— 一切皆插件的 Agent 框架 |
+| [MiniMax CLI](https://github.com/MiniMax-AI/cli) | MiniMax 官方命令行工具 |
+| [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | DSH 插件精选集（本插件已收录） |
+| [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins) | DSH 插件生态雷达（尚未收录） |
+| [dsh-recommend](https://github.com/zp-home/dsh-recommend) | DSH 插件排行榜（本插件已收录） |
+
+## 贡献
+
+欢迎提 Issue 和 PR。开发流程：
+
+```bash
+git clone https://github.com/welsione/dsh-mmx-bridge.git
+cd dsh-mmx-bridge
+npm install
+npm run build        # 构建 lib/
+dsh plugin --profile web add .  # 本地安装测试
+```
 
 ## 许可证
 
 [MIT](LICENSE)
+
+---
+
+<p align="center">
+  如果这个插件对你有帮助，欢迎给个 ⭐ Star 支持一下！
+</p>
