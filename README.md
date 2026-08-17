@@ -59,30 +59,6 @@ dsh plugin --profile web rm dsh-mmx-bridge
 | :--: | :--: |
 | ![vision demo](docs/vision-demo.png) | ![plugin settings](docs/plugin-settings.png) |
 
-## 在 DSH 中使用
-
-安装后直接在对话中使用，无需额外配置：
-
-```
-你：帮我画一只赛博朋克风格的猫
-AI：[调用 mmx_bridge(action="image", prompt="cyberpunk cat") → 图片内嵌显示]
-
-你：读一下这张图
-AI：[调用 mmx_bridge(action="describe", image="...") → 文字描述]
-
-你：用甜美女声说一段欢迎词
-AI：[调用 mmx_bridge(action="speech", text="欢迎来到我的频道", voice="...") → 音频播放器]
-
-你：帮我做个 10 秒视频
-AI：[调用 mmx_bridge(action="video", prompt="...", duration=10) → 视频播放器]
-
-你：写一首中文说唱
-AI：[调用 mmx_bridge(action="music", lyrics="[Verse]...[Chorus]...") → 音频]
-
-你：搜索最新的 AI 新闻
-AI：[调用 mmx_bridge(action="search", q="AI news today") → 实时结果]
-```
-
 ## 架构
 
 ```
@@ -138,7 +114,6 @@ mmx-cli 直连 MiniMax API（api.minimax.chat），国内一般可直连。如�
 | [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) | DSH 本体 —— 一切皆插件的 Agent 框架 |
 | [MiniMax CLI](https://github.com/MiniMax-AI/cli) | MiniMax 官方命令行工具 |
 | [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | DSH 插件精选集（本插件已收录） |
-| [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins) | DSH 插件生态雷达（尚未收录） |
 | [dsh-recommend](https://github.com/zp-home/dsh-recommend) | DSH 插件排行榜（本插件已收录） |
 
 ## 贡献
