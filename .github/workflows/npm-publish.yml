@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -18,7 +19,8 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
 
-      - name: Verify tag matches package version
+      - name: Verify tag matches package version (tag pushes only)
+        if: github.event_name == 'push'
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
           VER="v$(node -p "require('./package.json').version")"
