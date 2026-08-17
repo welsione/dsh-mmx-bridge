@@ -46,6 +46,19 @@
 > 3. 优先执行 `dsh plugin --profile <profile> add dsh-mmx-bridge`（安装后自动挂载，无需再手动改 `cordis.patch.yml`）；npm 源不可用时改用 `github:welsione/dsh-mmx-bridge`。
 > 4. 免重启验证全部通过即安装完成；**不要重启 DSH**，把 AGENT.md 第 5 节「重启与重启后验证」清单转给我执行。
 
+## 卸载
+
+```bash
+dsh plugin --profile web rm dsh-mmx-bridge
+```
+
+自动挂载路径会随之移除挂载行。若当初用的是手动安装（克隆到 `packages/` + 手动挂载行），需额外删除 `~/.dsh/profiles/web/packages/dsh-mmx-bridge/` 目录与 `cordis.patch.yml` 中的 `- id: mmx-bridge` 行，再重启 DSH。
+
+## 兼容性
+
+- 在 **DSH 0.1.0-rc.6**（Web GUI profile）上开发与验证；`dsh.bundle.patch` 自动挂载依赖 `dsh plugin` 的子命令行为，版本差异可能影响安装步骤，以 [AGENT.md](AGENT.md) 为准。
+- 运行时**零 npm 依赖**（仅使用 Node 内置模块），工具调用依赖外部 `mmx-cli`（`npm install -g mmx-cli` + `mmx auth login`）。
+
 ## 相关
 
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) · [MiniMax CLI](https://github.com/MiniMax-AI/cli) · [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins)

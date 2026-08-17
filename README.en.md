@@ -46,6 +46,19 @@ Copy the prompt below (**the whole block**) to your AI assistant (agent) — it 
 > 3. Prefer `dsh plugin --profile <profile> add dsh-mmx-bridge` (auto-mounts after install; do NOT also edit `cordis.patch.yml`); if the npm registry is unreachable, use `github:welsione/dsh-mmx-bridge`.
 > 4. Installation is done once the no-restart checks pass; do **not** restart DSH — hand me the "重启与重启后验证" (restart & post-restart) checklist from AGENT.md section 5.
 
+## Uninstall
+
+```bash
+dsh plugin --profile web rm dsh-mmx-bridge
+```
+
+For the auto-mount path, the mount entry is removed as well. If you installed manually (cloned into `packages/` plus a manual mount line), also delete `~/.dsh/profiles/web/packages/dsh-mmx-bridge/` and the `- id: mmx-bridge` line in `cordis.patch.yml`, then restart DSH.
+
+## Compatibility
+
+- Developed and verified on **DSH 0.1.0-rc.6** (Web GUI profile). Auto-mounting via `dsh.bundle.patch` depends on `dsh plugin` subcommand behavior, so version differences may affect install steps — defer to [AGENT.md](AGENT.md).
+- **Zero npm runtime dependencies** (Node builtins only). Tool calls depend on the external `mmx-cli` (`npm install -g mmx-cli` + `mmx auth login`).
+
 ## Related
 
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) · [MiniMax CLI](https://github.com/MiniMax-AI/cli) · [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins)
