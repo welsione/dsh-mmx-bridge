@@ -90,6 +90,12 @@ dsh plugin --profile web rm dsh-mmx-bridge
 </details>
 
 <details>
+<summary><b>Q: 设置页「插件配置」看不到 dsh-mmx-bridge 管理卡片？</b></summary>
+
+DSH rc.7 起设置页按服务端注册的 settings 命名空间分发卡片，**需插件 ≥ 1.0.4**（1.0.4 起注册 `dsh-mmx-bridge` 命名空间）。确认安装版本 ≥ 1.0.4 并**重启 dsh**（服务端 ESM 缓存不热替换），再强刷 Web GUI 页面。
+</details>
+
+<details>
 <summary><b>Q: 图片生成报错 "API key not found"？</b></summary>
 
 需要先运行 `mmx auth login` 登录 MiniMax 账号。如果使用 Token Plan，确保套餐有效。

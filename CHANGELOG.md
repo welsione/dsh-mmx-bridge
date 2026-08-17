@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- **设置页管理卡片在 DSH rc.7+ 不显示**：DSH rc.7 把 `settings.plugin.item` 槽改为 keyed 分发，设置页只渲染「key 匹配且命名空间已被服务端注册（`settings.describe()` 返回）」的卡片。修复两处叠加缺陷：
+  - 客户端 `lib/client.js`：`settings.plugin.item` 槽注册补充 `key: "dsh-mmx-bridge"`（keyed 槽强制校验 `options.key`，此前仅声明 `id` 会直接抛 `keyed slot ... requires options.key`，卡片注册失败）；保留 `id` 以兼容 rc.6 的 list 槽，两代并存
+  - 服务端 `lib/index.js`：新增 `installSettingsSection(ctx, settingsNamespace('dsh-mmx-bridge'), z.object({}), {}, { setSource(){}, onChange(){} })`，把 `dsh-mmx-bridge` 命名空间「服务」出去——这是 rc.7 设置页渲染卡片的前提（Host 端服务的命名空间 ∩ 客户端注册的 key 才渲染）。卡片实际读写仍走 `/api/mmx-bridge/*` 控制文件路由，故命名空间注册空 schema 即可（仅作服务标记，不重复承载配置状态）
+  - `package.json`：补充依赖声明 —— `@deepseek-ai/dsh-settings`（peerDependencies，宿主 DSH 提供）、`@deepseek-ai/schemastery`（dependencies，始终需要）；模式与官方插件 `@deepseek-ai/dsh-agent-loop` 一致
 - README（zh/en）图片改为绝对 GitHub 链接（`github.com/welsione/dsh-mmx-bridge/raw/main/docs/*.png`）：此前为相对路径 `docs/*.png`，npm 页面与部分渲染环境无法解析导致图片不显示；npm 包 `files` 不含 `docs/`，改绝对链接后 GitHub/npm 均可正常展示
 - README 内 [AGENT.md] 链接改为绝对 blob 地址（`github.com/welsione/dsh-mmx-bridge/blob/main/AGENT.md`），避免在非 GitHub 渲染环境下点不到
 
