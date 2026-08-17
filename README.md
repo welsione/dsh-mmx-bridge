@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.png" alt="dsh-mmx-bridge banner" width="100%" />
+  <img src="https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/banner.png" alt="dsh-mmx-bridge banner" width="100%" />
 </p>
 
 # dsh-mmx-bridge
@@ -23,7 +23,7 @@
 DSH 默认只支持纯文本对话——**看不了图、画不了画、说不了话、做不了视频**。`dsh-mmx-bridge` 通过一个 `mmx_bridge` 工具接入 MiniMax 全栈多模态模型，一次安装，8 种能力即开即用：
 
 <p align="center">
-  <img src="docs/features.png" alt="feature overview" width="90%" />
+  <img src="https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/features.png" alt="feature overview" width="90%" />
 </p>
 
 ## 快速开始
@@ -41,7 +41,7 @@ dsh plugin --profile web add dsh-mmx-bridge
 
 > ⚠️ npm 不通？改用 `dsh plugin --profile web add github:welsione/dsh-mmx-bridge`
 
-安装后**无需重启**，刷新 Web GUI 即可使用。详见 [AGENT.md](AGENT.md)。
+安装后**无需重启**，刷新 Web GUI 即可使用。详见 [AGENT.md](https://github.com/welsione/dsh-mmx-bridge/blob/main/AGENT.md)。
 
 ### 卸载
 
@@ -53,11 +53,11 @@ dsh plugin --profile web rm dsh-mmx-bridge
 
 | 图片生成 | 语音合成 |
 | :--: | :--: |
-| ![image generation](docs/image-generation.png) | ![speech tts](docs/speech-tts.png) |
+| ![image generation](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/image-generation.png) | ![speech tts](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/speech-tts.png) |
 
 | 图像识别（VLM 描述） | 插件配置页 |
 | :--: | :--: |
-| ![vision demo](docs/vision-demo.png) | ![plugin settings](docs/plugin-settings.png) |
+| ![vision demo](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/vision-demo.png) | ![plugin settings](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/plugin-settings.png) |
 
 ## 架构
 

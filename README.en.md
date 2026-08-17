@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.png" alt="dsh-mmx-bridge banner" width="100%" />
+  <img src="https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/banner.png" alt="dsh-mmx-bridge banner" width="100%" />
 </p>
 
 # dsh-mmx-bridge
@@ -23,7 +23,7 @@ English · [中文 README](README.md)
 DSH is text-only by default — **no images, no speech, no video**. `dsh-mmx-bridge` plugs in MiniMax's full multimodal stack through a single `mmx_bridge` tool. Install once, get 8 capabilities:
 
 <p align="center">
-  <img src="docs/features.png" alt="feature overview" width="90%" />
+  <img src="https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/features.png" alt="feature overview" width="90%" />
 </p>
 
 ## Quick Start
@@ -41,7 +41,7 @@ dsh plugin --profile web add dsh-mmx-bridge
 
 > ⚠️ npm unreachable? Use `dsh plugin --profile web add github:welsione/dsh-mmx-bridge`
 
-No restart needed — just refresh the Web GUI. See [AGENT.md](AGENT.md) for details.
+No restart needed — just refresh the Web GUI. See [AGENT.md](https://github.com/welsione/dsh-mmx-bridge/blob/main/AGENT.md) for details.
 
 ### Uninstall
 
@@ -53,11 +53,11 @@ dsh plugin --profile web rm dsh-mmx-bridge
 
 | Image generation | Speech synthesis |
 | :--: | :--: |
-| ![image generation](docs/image-generation.png) | ![speech tts](docs/speech-tts.png) |
+| ![image generation](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/image-generation.png) | ![speech tts](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/speech-tts.png) |
 
 | Image understanding (VLM) | Plugin settings |
 | :--: | :--: |
-| ![vision demo](docs/vision-demo.png) | ![plugin settings](docs/plugin-settings.png) |
+| ![vision demo](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/vision-demo.png) | ![plugin settings](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/plugin-settings.png) |
 
 ## Architecture
 
