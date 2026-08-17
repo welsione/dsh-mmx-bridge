@@ -5,6 +5,7 @@
 ### Fixed
 
 - 设置页管理卡片支持折叠/展开（可点击头部、chevron 指示、展开态高亮），与 dsh-plugin-manager 原 card 交互一致
+- 修复：保存「每次生成图片数量」时保留 `webSearchEnabled` / `readImageEnabled` 字段（此前 set-config 会覆盖控制文件，导致接管开关状态丢失）
 
 ## [1.0.2] - 2026-08-16
 
