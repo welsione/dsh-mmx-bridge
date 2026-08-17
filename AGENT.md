@@ -162,6 +162,8 @@ dsh plugin --profile web up dsh-mmx-bridge   # 或 cd ~/.dsh/profiles/web && pnp
 
 | 现象 | 排查 |
 | :-- | :-- |
+| **设置页有 `dsh-mmx-bridge` 卡片，但点开关报 404** | 客户端（磁盘读取，刷新即新）与服务端（进程启动时加载）版本错位：装完/升级后**没有重启 dsh**。重启用 `curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:<port>/api/mmx-bridge/status` 应得 200；并确认装的版本 ≥ 1.0.2 |
+| **设置页完全没有管理面板卡片** | 面板 1.0.2 起内置（此前是本地 dsh-plugin-manager 提供，未发布，换机即失）；1.0.2+ 仍无卡片 → 查安装版本（`node -e "console.log(require('<profile>/node_modules/dsh-mmx-bridge/package.json').version)"`）、刷新页面、确认 dsh 重启过 |
 | `dsh plugin` 报 `pnpm not found on PATH` | 先 `corepack enable` 或 `npm install -g pnpm`；或改走第 4 节手动安装 |
 | 安装/验证时报 EPERM（写 profile 目录失败） | Agent 运行在文件沙箱时属正常；请用户授权写 `~/.dsh/profiles/<P>`，或换非沙箱终端执行 |
 | 安装命令连 github.com 超时 | 重试；或改用 npm 源裸名 `dsh plugin --profile <P> add dsh-mmx-bridge` |
