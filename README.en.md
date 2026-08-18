@@ -9,7 +9,7 @@
 [![npm version](https://img.shields.io/npm/v/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
 [![GitHub stars](https://img.shields.io/github/stars/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge)
-[![DSH version](https://img.shields.io/badge/DSH-0.1.0--rc.6+-brightgreen)](https://github.com/deepseek-ai/deepseek-harness)
+[![DSH version](https://img.shields.io/badge/DSH-0.1.0--rc.7+-brightgreen)](https://github.com/deepseek-ai/deepseek-harness)
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
 [![minimax](https://img.shields.io/badge/power_minimax--cli-blueviolet)](https://github.com/MiniMax-AI/cli)
@@ -32,7 +32,7 @@ DSH is text-only by default — **no images, no speech, no video**. `dsh-mmx-bri
 
 ### Prerequisites
 
-1. [DSH](https://github.com/deepseek-ai/deepseek-harness) v0.1.0-rc.6+
+1. [DSH](https://github.com/deepseek-ai/deepseek-harness) v0.1.0-rc.7+
 2. [mmx-cli](https://github.com/MiniMax-AI/cli) installed & logged in: `npm i -g mmx-cli && mmx auth login`
 
 ### Install
@@ -86,7 +86,7 @@ User chat → DSH Agent → mmx_bridge tool → mmx-cli → MiniMax API
 
 | Item | Details |
 |:--|:--|
-| DSH version | 0.1.0-rc.6+ (Web GUI profile) |
+| DSH version | 0.1.0-rc.7+ (Web GUI profile) |
 | Runtime deps | Zero npm deps (Node builtins) |
 | External deps | [mmx-cli](https://github.com/MiniMax-AI/cli) (at call time) |
 | OS | macOS / Linux / Windows (Node.js 18+) |
@@ -96,7 +96,7 @@ User chat → DSH Agent → mmx_bridge tool → mmx-cli → MiniMax API
 <details>
 <summary><b>Q: Don't see the mmx_bridge tool after install?</b></summary>
 
-Verify DSH version ≥ 0.1.0-rc.6 and mmx-cli is installed (`mmx --version`). Refresh the Web GUI page.
+Verify DSH version ≥ 0.1.0-rc.7 and mmx-cli is installed (`mmx --version`). Refresh the Web GUI page.
 </details>
 
 <details>

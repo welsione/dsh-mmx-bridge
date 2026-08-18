@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.6] - 2026-08-18
+
+### Changed
+
+- 插件支持的 DSH 版本统一为 **0.1.0-rc.7+**：peerDependency `@deepseek-ai/dsh-settings` 从 `^0.1.0-rc.6` 调整为 `^0.1.0-rc.7`（与宿主 DSH rc.7 生态、dshmarket 的声明一致；设置页命名空间卡片与图片桥均依赖 rc.7 能力）；README（zh/en）徽章、前置条件、兼容性表、FAQ 同步更新
+
 ## [1.0.5] - 2026-08-18
 
 ### Features

@@ -9,7 +9,7 @@
 [![npm version](https://img.shields.io/npm/v/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
 [![npm downloads](https://img.shields.io/npm/dm/dsh-mmx-bridge.svg)](https://www.npmjs.com/package/dsh-mmx-bridge)
 [![GitHub stars](https://img.shields.io/github/stars/welsione/dsh-mmx-bridge.svg)](https://github.com/welsione/dsh-mmx-bridge)
-[![DSH version](https://img.shields.io/badge/DSH-0.1.0--rc.6+-brightgreen)](https://github.com/deepseek-ai/deepseek-harness)
+[![DSH version](https://img.shields.io/badge/DSH-0.1.0--rc.7+-brightgreen)](https://github.com/deepseek-ai/deepseek-harness)
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
 [![minimax](https://img.shields.io/badge/power_minimax--cli-blueviolet)](https://github.com/MiniMax-AI/cli)
@@ -32,7 +32,7 @@ DSH 默认只支持纯文本对话——**看不了图、画不了画、说不�
 
 ### 前置条件
 
-1. 已安装 [DSH](https://github.com/deepseek-ai/deepseek-harness)（v0.1.0-rc.6+）
+1. 已安装 [DSH](https://github.com/deepseek-ai/deepseek-harness)（v0.1.0-rc.7+）
 2. 已安装 [mmx-cli](https://github.com/MiniMax-AI/cli) 并登录：`npm i -g mmx-cli && mmx auth login`
 
 ### 一条命令安装
@@ -86,7 +86,7 @@ dsh plugin --profile web rm dsh-mmx-bridge
 
 | 项目 | 说明 |
 |:--|:--|
-| DSH 版本 | 0.1.0-rc.6+（Web GUI profile） |
+| DSH 版本 | 0.1.0-rc.7+（Web GUI profile） |
 | 运行时依赖 | 零 npm 依赖（Node 内置模块） |
 | 外部依赖 | [mmx-cli](https://github.com/MiniMax-AI/cli)（工具调用时） |
 | OS | macOS / Linux / Windows（需 Node.js 18+） |
@@ -96,7 +96,7 @@ dsh plugin --profile web rm dsh-mmx-bridge
 <details>
 <summary><b>Q: 安装后看不到 mmx_bridge 工具？</b></summary>
 
-确认 DSH 版本 ≥ 0.1.0-rc.6，且 `mmx-cli` 已安装（`mmx --version`）。刷新 Web GUI 页面后重试。
+确认 DSH 版本 ≥ 0.1.0-rc.7，且 `mmx-cli` 已安装（`mmx --version`）。刷新 Web GUI 页面后重试。
 </details>
 
 <details>
