@@ -13,7 +13,7 @@
 - 注册一个模型工具 `mmx_bridge`（describe / image / video / speech / music / cover / search / quota），底层调用 MiniMax 官方 [mmx CLI](https://github.com/MiniMax-AI/cli)（npm 包 `mmx-cli`）。
 - 自带**客户端增强**：对话流里工具卡片渲染内嵌播放器/缩略图；消息正文的 `/mmx-files/*` 链接自动升级为图片预览或音视频播放器（含下载按钮、加载失败提示）。
 - 可选**接管内置工具**：`web_search`（mmx 版搜索）、`read_image`（VLM 文字描述）。
-- **v1.1.0 聊天输入层图片桥（界面零改动）**：拖入/粘贴图片直接发送，你的消息（图片块＋提示词）在会话中**原样保留**。实现全在服务端、走 DSH 官方扩展点：
+- **v1.0.5 聊天输入层图片桥（界面零改动）**：拖入/粘贴图片直接发送，你的消息（图片块＋提示词）在会话中**原样保留**。实现全在服务端、走 DSH 官方扩展点：
   - 能力声明：包装 `ctx.llm.resolveModelInfo`（DSH 无模型能力装饰钩子，`registerAdapter` 不允许替换已注册 provider，故包装公开方法），对纯文本模型补声明 `image` 输入能力，使核心的图片准入检查（`MODEL_DOES_NOT_SUPPORT_IMAGES`）放行；仅影响「是否允许图片块」判断，模型本身仍是文本模型；
   - LLM 边界转换：监听官方 `llm/stream` 瀑布事件，把消息里的图片块（base64 内联数据）解码落盘到 outDir（文件名 `bridge-<sha1前10位>-<名>`，同图去重），替换为「`[名](URL) 本地文件：<path>`」文本后**重入** `llm.stream` 发送（`transforming` 标志防递归）；无图片块直通；原能力声明含 image 的真·视觉模型直通；
   - 开关：控制文件 `imageBridgeEnabled`（默认开，2 秒缓存）或设置页卡片（`POST /api/mmx-bridge/set-enabled { plugin: "imagebridge" }`）。
