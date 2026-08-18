@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.0] - 2026-08-18
+
+### Features
+
+- **文本模型直接收图（界面零改动）**：拖入/粘贴图片后正常发送，消息（图片块＋提示词）在会话中**原样显示与存储**，不再报「当前模型不支持图片」。实现全在服务端，走 DSH 官方扩展点：
+  - **能力声明**：包装 `ctx.llm.resolveModelInfo`（DSH 无模型能力装饰钩子，`registerAdapter` 不允许替换已注册 provider），对纯文本模型补声明 `image` 输入能力，使核心的图片准入检查放行——仅影响「是否允许图片块」判断，模型本身仍是文本模型；开关关闭时立即恢复原能力声明
+  - **LLM 边界转换**：监听官方 `llm/stream` 瀑布事件，把消息里的图片块（base64 内联数据）解码落盘到 outDir（默认 `/tmp/mmx-out/`，文件名 `bridge-<sha1前10位>-<名>`，同图按内容哈希去重，经既有 `/mmx-files/` 路由同源访问），替换为「`[图片：名](URL) 本地文件：<path>`」文本后**重入** `llm.stream` 发送（`transforming` 标志防递归）；无图片块直通；原能力声明含 image 的真·视觉模型直通不转换
+  - 消息内容不变，用户感知为「图片放进输入框，AI 就能识别」；Agent 收到地址后自动调用 `read_image` / `mmx_bridge(describe)` 看图
+  - 控制文件新增 `imageBridgeEnabled` 开关（默认开，2 秒生效）；`settings.plugin.item` 设置卡片新增「文本模型直接收图（图片桥）」开关（`POST /api/mmx-bridge/set-enabled { plugin: "imagebridge" }`）；状态文件新增 `bridgeImages` 计数
+
+### Changed
+
+- `web_search` / `read_image` 接管开关**默认开启**（未配置即开，显式 `false` 才关闭）：装完即用 mmx 版搜索与 VLM 看图，无需手动开启
+
+### Fixed
+
+- 修复插件卸载清理时的 `ReferenceError: mgmtDispose is not defined`（`mgmtDispose` 声明在 `registerAll` 内层作用域、清理函数在外层引用；仅插件卸载/热重载时触发，正常运行不受影响）——声明提升至 effect 作用域
+- 视觉调用（`read_image` / `mmx_bridge(describe)`）新增自动重试（最多 3 次带退避）：MiniMax 内容审核偶发抖动（同图可能一次报 `input image sensitive`、一次成功）
+
 ## [1.0.4] - 2026-08-17
 
 ### Fixed

@@ -22,6 +22,8 @@ English · [中文 README](README.md)
 
 DSH is text-only by default — **no images, no speech, no video**. `dsh-mmx-bridge` plugs in MiniMax's full multimodal stack through a single `mmx_bridge` tool. Install once, get 8 capabilities:
 
+> **v1.1.0+: just drop an image to send it — your input stays untouched.** Dropping or pasting an image into the chat input works with text-only models: your message (image + prompt) is displayed and stored exactly as you wrote it. Behind the scenes the plugin lets it pass the model gate and, right before the LLM call, saves the image to a temp dir (default `/tmp/mmx-out/`) and replaces it with "image URL + local path" text — the Agent then automatically calls `read_image` / `mmx_bridge(describe)` to look at it. Models that genuinely support image input pass through untouched. Disable anytime from the plugin settings card.
+
 <p align="center">
   <img src="https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/features.png" alt="feature overview" width="90%" />
 </p>
