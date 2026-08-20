@@ -1,5 +1,6 @@
-// lib/img-cache.js（图片识别缓存）纯函数测试：真实 PNG/JPEG + 全部缓存语义。
-// 运行：node test/img-cache.test.mjs（无外部依赖；JPEG 用例在无 sips 时自动跳过）。
+// lib/img-cache.js（图片识别缓存）纯函数测试：跨平台（无需 sips 即可全绿）。
+// 核心用例全部基于 PNG（zlib 生成，Node 内建）；JPEG 原生嵌入在有 sips（macOS）时追加验证。
+// 运行：node test/img-cache.test.mjs
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
@@ -29,15 +30,12 @@ function skipCheck(name) {
   console.log('SKIP  ' + name)
   skip++
 }
-const jpegOk = existsSync(jpg) && readFileSync(jpg)[0] === 0xff && readFileSync(jpg)[1] === 0xd8
-const pngSig = readFileSync(png).subarray(0, 8).toString('hex')
-check('fixture PNG (89PNG) + JPEG (FFD8)', pngSig === '89504e470d0a1a0a' && (!hasJpeg || jpegOk))
 
-// 复制进 outDir（插件产物语义：bridge-* 副本）
-const outJpg = join(OUT, 'bridge-aaaa111111-photo.jpg')
+// 复制进 outDir（插件产物语义：bridge-* 副本）——核心用例统一用 PNG
 const outPng = join(OUT, 'bridge-aaaa111111-photo.png')
-writeFileSync(outJpg, readFileSync(jpg))
+const outJpg = join(OUT, 'bridge-aaaa111111-photo.jpg')
 writeFileSync(outPng, readFileSync(png))
+if (hasJpeg) writeFileSync(outJpg, readFileSync(jpg))
 
 // ── 1) 基础写入 + 命中 ──
 {
@@ -64,28 +62,29 @@ writeFileSync(outPng, readFileSync(png))
 }
 // ── 3) 多 prompt 分层：各层独立、互不串读 ──
 {
-  cache.writeImageCache(outJpg, '', '通用详细描述', { outDir: OUT })
-  cache.writeImageCache(outJpg, '照片里猫的帽子是什么颜色？', '红色的宇航员头盔', { outDir: OUT })
-  cache.writeImageCache(outJpg, '招牌上写着什么字？', '写着 DSH', { outDir: OUT })
-  const layers = JSON.parse(imgjson.extractAny(readFileSync(outJpg)).json).layers
+  cache.writeImageCache(outPng, '', '通用详细描述', { outDir: OUT })
+  cache.writeImageCache(outPng, '照片里猫的帽子是什么颜色？', '红色的宇航员头盔', { outDir: OUT })
+  cache.writeImageCache(outPng, '招牌上写着什么字？', '写着 DSH', { outDir: OUT })
+  const layers = JSON.parse(imgjson.extractAny(readFileSync(outPng)).json).layers
   const keyCount = Object.keys(layers).length
-  check('3 prompts -> 3 layers (JPEG)', keyCount === 3, Object.keys(layers))
-  const rDefault = cache.readImageCache(outJpg, '')
-  const rColor = cache.readImageCache(outJpg, '照片里猫的帽子是什么颜色？')
-  const rSign = cache.readImageCache(outJpg, '招牌上写着什么字？')
+  check('3 prompts -> 3 layers', keyCount === 3, Object.keys(layers))
+  const rDefault = cache.readImageCache(outPng, '')
+  const rColor = cache.readImageCache(outPng, '照片里猫的帽子是什么颜色？')
+  const rSign = cache.readImageCache(outPng, '招牌上写着什么字？')
   check('default layer intact', rDefault.hit && rDefault.description === '通用详细描述', rDefault)
   check('color layer answers color', rColor.hit && rColor.description === '红色的宇航员头盔', rColor)
   check('sign layer answers sign', rSign.hit && rSign.description === '写着 DSH', rSign)
-  check('unknown prompt -> miss', cache.readImageCache(outJpg, '没问过的问题').hit === false)
+  check('unknown prompt -> miss', cache.readImageCache(outPng, '没问过的问题').hit === false)
 }
-// ── 4) 图片被改（EOI 后追加字节改变纯图字节，不影响段结构解析）→ 所有层 stale → 重识别覆盖后恢复 ──
+// ── 4) 图片被改（文件尾追加字节改变纯图字节，不影响块结构解析）→ 层 stale → 重识别覆盖后恢复 ──
 {
-  writeFileSync(outJpg, Buffer.concat([readFileSync(outJpg), Buffer.from('TAMPERED-BYTES')]))
-  const rStale = cache.readImageCache(outJpg, '')
+  const modified = join(OUT, 'bridge-aaaa-mod2-photo.png')
+  writeFileSync(modified, Buffer.concat([readFileSync(outPng), Buffer.from('TAMPERED-BYTES')]))
+  const rStale = cache.readImageCache(modified, '')
   check('modified image -> stale (default layer)', rStale.hit === false && rStale.stale === true, rStale)
-  const wNew = cache.writeImageCache(outJpg, '', '重新识别后的新描述', { outDir: OUT })
+  const wNew = cache.writeImageCache(modified, '', '重新识别后的新描述', { outDir: OUT })
   check('stale refresh overwrite', wNew.wrote === true, wNew)
-  const rFresh = cache.readImageCache(outJpg, '')
+  const rFresh = cache.readImageCache(modified, '')
   check('after refresh -> hit with new desc', rFresh.hit === true && rFresh.description === '重新识别后的新描述', rFresh)
 }
 // ── 5) 加密载荷：只读不写 ──
@@ -127,18 +126,23 @@ writeFileSync(outPng, readFileSync(png))
   check('local path not remote', cache.isRemotePath('/tmp/x.png') === false)
   check('normalizePrompt trims & defaults', cache.normalizePrompt('  a  ') === 'a' && cache.normalizePrompt(undefined) === '')
 }
-// ── 9) 写回后图片仍可解码（sips）──
-if (sipsAvailable()) {
-  for (const f of [outJpg, outPng]) {
-    try {
-      execFileSync('sips', ['-g', 'pixelWidth', f], { stdio: 'ignore' })
-      check('sips decodes after embed: ' + f.split('/').pop(), true)
-    } catch (e) {
-      check('sips decodes after embed: ' + f.split('/').pop(), false, String(e))
-    }
+// ── 9) macOS（有 sips）追加：JPEG 原生嵌入往返 + 写回后图片仍可解码 ──
+if (hasJpeg) {
+  const w = cache.writeImageCache(outJpg, '', 'JPEG 通用描述', { outDir: OUT })
+  check('JPEG write default layer', w.wrote === true, w)
+  const r = cache.readImageCache(outJpg, '')
+  check('JPEG read default hit', r.hit === true && r.description === 'JPEG 通用描述', r)
+  const layers = JSON.parse(imgjson.extractAny(readFileSync(outJpg)).json).layers
+  check('JPEG single block', Object.keys(layers).length === 1)
+  try {
+    execFileSync('sips', ['-g', 'pixelWidth', outJpg], { stdio: 'ignore' })
+    execFileSync('sips', ['-g', 'pixelWidth', outPng], { stdio: 'ignore' })
+    check('sips decodes after embed (jpg+png)', true)
+  } catch (e) {
+    check('sips decodes after embed (jpg+png)', false, String(e))
   }
 } else {
-  skipCheck('sips decode checks')
+  skipCheck('JPEG native embed + sips decode (needs sips, macOS only)')
 }
 // ── 10) 空/无块文件 ──
 {
