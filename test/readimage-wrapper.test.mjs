@@ -4,9 +4,22 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlink
 import { EventEmitter } from 'node:events'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import * as plugin from '../lib/index.js'
-import * as cacheModule from '../lib/img-cache.js'
 import { makePng } from './fixture.mjs'
+// 插件本体依赖宿主 DSH 提供的 @deepseek-ai/* 运行时包；在裸 checkout（如 CI）里没有它们，
+// 无法 import 插件。与 sips/JPEG 用例同思路：能解析就完整跑，不能就优雅 SKIP。
+// （本机装有插件的 profile 里始终完整运行；运行级 install 冒烟由 dsh-plugin-developer 的 test.mjs 覆盖。）
+let plugin = null
+let cacheModule = null
+try {
+  plugin = await import('../lib/index.js')
+  cacheModule = await import('../lib/img-cache.js')
+} catch (e) {
+  if (e && e.code === 'ERR_MODULE_NOT_FOUND') {
+    console.log('SKIP  read_image wrapper tests (host @deepseek-ai deps unavailable in bare checkout)')
+    process.exit(0)
+  }
+  throw e
+}
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const TMP = join(HERE, 'tmp')
