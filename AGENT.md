@@ -17,6 +17,12 @@
   - 能力声明：包装 `ctx.llm.resolveModelInfo`（DSH 无模型能力装饰钩子，`registerAdapter` 不允许替换已注册 provider，故包装公开方法），对纯文本模型补声明 `image` 输入能力，使核心的图片准入检查（`MODEL_DOES_NOT_SUPPORT_IMAGES`）放行；仅影响「是否允许图片块」判断，模型本身仍是文本模型；
   - LLM 边界转换：监听官方 `llm/stream` 瀑布事件，把消息里的图片块（base64 内联数据）解码落盘到 outDir（文件名 `bridge-<sha1前10位>-<名>`，同图去重），替换为「`[名](URL) 本地文件：<path>`」文本后**重入** `llm.stream` 发送（`transforming` 标志防递归）；无图片块直通；原能力声明含 image 的真·视觉模型直通；
   - 开关：控制文件 `imageBridgeEnabled`（默认开，2 秒缓存）或设置页卡片（`POST /api/mmx-bridge/set-enabled { plugin: "imagebridge" }`）。
+- **v1.0.7 图片识别缓存（内嵌 JSON，默认开启）**：识别结果写回图片本身，同图同句再次读取直接复用，零 VLM 调用。
+  - 内核：`lib/imgjson.mjs`（vendor 自 welsione/imgjson v0.3.0，零依赖）——PNG `tEXt` / JPEG `COM` 标准块原生嵌入，其余格式 EOF 兜底；
+  - 缓存层：`lib/img-cache.js`（纯函数）——信封 `{v, tool, ts, layers: { <prompt>: { ts, sha256, description } }}`，**按 prompt 分层**，同 prompt 覆盖、新 prompt 增键、层数超 100 淘汰最旧；
+  - 覆盖 `read_image`（默认档）与 `mmx_bridge(describe)`（按本次 prompt），命中返回 `cached:true`；图片重新编码后 sha256 不匹配→缓存显式失效并自动重建；
+  - 只写回 outDir 内 `bridge-*` 副本，绝不触碰 attachments 存储；加密载荷/他人数据拒绝覆盖；原子写入。
+  - 开关：控制文件 `imageCacheEnabled`（默认开）或设置页卡片（`POST /api/mmx-bridge/set-enabled { plugin: "imagecache" }`）；状态文件含 `cacheHits` / `cacheWrites` / `cacheStale`。
 
 ## 2. 前置条件
 
@@ -146,13 +152,14 @@ dsh plugin --profile web up dsh-mmx-bridge   # 或 cd ~/.dsh/profiles/web && pnp
 控制文件字段：
 
 ```json
-{ "enabled": true, "count": 3, "webSearchEnabled": true, "readImageEnabled": true }
+{ "enabled": true, "count": 3, "webSearchEnabled": true, "readImageEnabled": true, "imageBridgeEnabled": true, "imageCacheEnabled": true }
 ```
 
 - `enabled`：`mmx_bridge` 工具总开关
 - `count`：每次 `image` 出图数（1–8）
 - `webSearchEnabled`：接管 `web_search`（mmx 版搜索）。**未配置时默认开启**，显式设为 `false` 才关闭
 - `readImageEnabled`：接管 `read_image`（VLM 文字描述，适合模型不支持图像输入的场合）。**未配置时默认开启**，显式设为 `false` 才关闭
+- `imageCacheEnabled`：识别缓存（识别结果内嵌写回图片，同图同问复用）。**未配置时默认开启**，显式设为 `false` 才关闭
 
 开关也可在 Web GUI **设置 → 插件 → 插件配置** 中操作（1.0.2+ 内置管理面板卡片，直接随包提供，会写控制文件；无需额外安装面板插件）。
 

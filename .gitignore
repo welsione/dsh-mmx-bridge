@@ -1,9 +1,15 @@
 # Dependencies
+node_modules
 node_modules/
+.dsh/
+dist/
 
 # Logs & runtime artifacts
 *.log
 /tmp/
+
+# Test artifacts
+test/tmp/
 
 # OS / editor noise
 .DS_Store

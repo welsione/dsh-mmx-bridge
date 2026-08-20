@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.0.7] - 2026-08-20
+
+### Features
+
+- **图片识别缓存（内嵌 JSON，默认开启）**：识别结果写回图片本身，同图同问再次读取直接复用，零 VLM 调用：
+  - 内置 imgjson 内核（`lib/imgjson.mjs`，vendor 自 welsione/imgjson v0.3.0，零依赖）：PNG `tEXt` / JPEG `COM` 标准块原生嵌入，其余格式 EOF 兜底
+  - 新增 `lib/img-cache.js` 缓存层（纯函数）：信封结构 `{v, tool, ts, layers: { <prompt>: { ts, sha256, description } }}`，**按 prompt 分层**——通用描述与各次追问答案并存、互不覆盖；同 prompt 重复识别覆盖该键（文件不膨胀），层数超 100 按 ts 淘汰最旧
+  - 命中条件 = 键存在 且 该键 sha256 与当前纯图字节一致；图片被重新编码/转存后缓存显式失效（stale）并自动重建
+  - 覆盖两个入口：`read_image`（默认档）与 `mmx_bridge(describe)`（按本次 prompt 分层读写，追问也走这里）；命中结果返回 `cached:true`（read_image 输出形状不变）；Agent 通常传入插件自身的 `/mmx-files` URL，插件会把该 URL 还原为本地 outDir 文件后再走缓存（`toLocalFile`，仅限本插件 origin+前缀内、防目录穿越），保证真实链路缓存生效
+  - 安全护栏：写回仅限 `outDir` 内插件自建 `bridge-*` 副本，绝不触碰 DSH attachments 存储；已有加密载荷/他人数据时拒绝覆盖（保护用户数据）；原子写入（tmp+rename）失败不损坏原图；URL/远程不参与缓存
+  - 控制文件新增 `imageCacheEnabled` 开关（默认开）；状态文件新增 `cacheHits` / `cacheWrites` / `cacheStale` 计数；设置卡片新增「识别缓存」开关与命中统计
+- 内嵌识别缓存为明文（未加密），README 已注明
+
+### Changed
+
+- **计数持久化（重启/升级不丢）**：`calls / readImageCalls / failures / skipped / bridgeImages / cacheHits / cacheWrites / cacheStale` 启动时从状态文件末行回读累计值，跨 dsh 重启、跨版本升级延续
+- **统计面板升级**：六项指标独立展示（工具调用 / 识图 / 桥接 / 缓存命中 / 缓存写入 / 失败），数值+图例栅格卡片，等宽数字对齐；底部状态行收敛为单行（启用状态 · mmx 路径 · 落盘目录）
+- peerDependencies 补全实际运行时依赖：新增 `@deepseek-ai/dsh-home-paths` 与 `react`（宿主 Web 组合运行时提供），`@deepseek-ai/schemastery` 保持 dependencies
+- 新增仓库内测试（`test/`）：img-cache 28 用例 + read_image/describe 包装 13 用例（含 /mmx-files URL 映射、重启计数恢复）；`npm test` 一键运行
+
+### Fixed
+
+- 消除静态安全审查 MKT-DATA-002（明文 http 提示）误报：代码与注释中仅作示例占位的 `http://<host>:<port>` 文本改为 `<origin>` 占位
+
 ## [1.0.6] - 2026-08-18
 
 ### Changed

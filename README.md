@@ -18,24 +18,35 @@
 
 ---
 
-## 为什么需要这个？
+## 概述（Overview）
 
 DSH 默认只支持纯文本对话——**看不了图、画不了画、说不了话、做不了视频**。`dsh-mmx-bridge` 通过一个 `mmx_bridge` 工具接入 MiniMax 全栈多模态模型，一次安装，8 种能力即开即用：
 
-> **v1.0.5 起：拖图直接发送，AI 就能识别——输入零改动。** 拖入/粘贴图片后正常发送：你的消息（图片＋提示词）在会话里**原样显示**，一个字节都不改。插件在背后做两件事：消息进入会话时被核心放行；发给 LLM 前，把图片落盘到临时目录（默认 `/tmp/mmx-out/`）并替换为「图片地址＋本地路径」文本——Agent 收到地址后自动调用 `read_image` / `mmx_bridge(describe)` 查看图片。你感知不到中间过程：图片放进输入框，AI 就能看到它。可在设置页「插件配置」关闭该行为。
+> **v1.0.5 起：拖图直接发送，AI 就能识别——输入零改动。** 拖入/粘贴图片后正常发送：你的消息（图片＋提示词）在会话里**原样显示**，一个字节都不改。插件在背后把图片落盘到临时目录（默认 `/tmp/mmx-out/`）并替换为「图片地址＋本地路径」文本——Agent 收到地址后自动调用 `read_image` / `mmx_bridge(describe)` 查看图片。你感知不到中间过程。
+>
+> **v1.0.7 起：图片识别缓存（内嵌 JSON，默认开启）。** 识别结果以 imgjson 标准块（PNG `tEXt` / JPEG `COM`）**写回图片本身**，同图同问题再次读取直接复用，**零 VLM 调用**；追问按问题分层缓存，各层互不覆盖；图片被重新编码时缓存自动失效重建。可在设置页「插件配置」关闭。
 
 <p align="center">
   <img src="https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/features.png" alt="feature overview" width="90%" />
 </p>
 
-## 快速开始
+## 兼容性（Compatibility）
+
+| 项目 | 说明 |
+|:--|:--|
+| DSH 版本 | 0.1.0-rc.7+（Web GUI profile） |
+| 运行时依赖 | 仅 Node.js 内置模块（零 npm 运行时依赖） |
+| 外部依赖 | [mmx-cli](https://github.com/MiniMax-AI/cli)（工具调用时） |
+| OS | macOS / Linux / Windows（需 Node.js 18+） |
+
+## 安装与卸载（Install / Uninstall）
 
 ### 前置条件
 
 1. 已安装 [DSH](https://github.com/deepseek-ai/deepseek-harness)（v0.1.0-rc.7+）
 2. 已安装 [mmx-cli](https://github.com/MiniMax-AI/cli) 并登录：`npm i -g mmx-cli && mmx auth login`
 
-### 一条命令安装
+### 安装
 
 ```bash
 dsh plugin --profile web add dsh-mmx-bridge
@@ -59,39 +70,59 @@ dsh plugin --profile web add dsh-mmx-bridge
 dsh plugin --profile web rm dsh-mmx-bridge
 ```
 
-## 效果展示
+## 快速开始（Quick Start）
 
-| 图片生成 | 语音合成 |
-| :--: | :--: |
-| ![image generation](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/image-generation.png) | ![speech tts](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/speech-tts.png) |
+一个工具，多模态全家桶。`mmx_bridge` 按 `action` 分发：
 
-| 图像识别（VLM 描述） | 插件配置页 |
-| :--: | :--: |
-| ![vision demo](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/vision-demo.png) | ![plugin settings](https://github.com/welsione/dsh-mmx-bridge/raw/main/docs/plugin-settings.png) |
+| action | 能力 | 关键参数 |
+|:--|:--|:--|
+| `describe` | 图片理解（VLM） | `image`＋可选 `prompt`（追问） |
+| `image` | 文生图 | `prompt` / `aspectRatio` / `count` |
+| `video` | 文/图生视频 | `prompt` + 可选 `image` |
+| `speech` | 语音合成 | `text` / `voice` |
+| `music` | 音乐生成 | `prompt` / `lyrics` / `instrumental` |
+| `cover` | 音频翻唱 | `prompt` + `audio` 参考音频 |
+| `search` | 联网搜索 | `q` |
+| `quota` | 用量查询 | — |
 
-## 架构
+聊天里直接对 Agent 说即可，例如：**「描述这张图片」**、**「生成一张赛博朋克猫的图」**、**「把这段文字变成语音」**。
 
-```
-用户对话 → DSH Agent → mmx_bridge 工具 → mmx-cli → MiniMax API
-                                                  ↓
-                                            /mmx-files/ 同源服务
-                                            （图片预览 / 音视频播放器）
-```
+## 配置（Configuration）
 
-- **零 npm 运行时依赖**：仅使用 Node.js 内置模块
-- **同源产物服务**：生成的文件经 `/mmx-files/` 路径直接内嵌在对话中，支持 Range 请求
-- **Web GUI 增强**：图片预览、音频/视频播放器、设置页管理卡片自动加载
+所有配置均可通过设置页「插件配置」卡片或控制文件调整。
 
-## 兼容性
+### 控制文件（默认 `/tmp/dsh-vision-control.json`）
 
-| 项目 | 说明 |
+| 键 | 默认 | 含义 |
+|:--|:--|:--|
+| `enabled` | `true` | 插件总开关 |
+| `count` | `3` | 每次文生图张数（1–8） |
+| `webSearchEnabled` | `true` | `web_search` 改用 mmx-cli |
+| `readImageEnabled` | `true` | `read_image` 改用 MiniMax VLM |
+| `imageBridgeEnabled` | `true` | 图片桥：拖图直发、发给 LLM 前落盘替换 |
+| `imageCacheEnabled` | `true` | 识别缓存：识别结果内嵌写回图片，同图同问复用 |
+
+> 键缺省即按默认值（`false` 显式关闭）。设置页开关写入同一文件。
+
+### 环境变量（MMX_*）
+
+| 变量 | 默认 |
 |:--|:--|
-| DSH 版本 | 0.1.0-rc.7+（Web GUI profile） |
-| 运行时依赖 | 零 npm 依赖（Node 内置模块） |
-| 外部依赖 | [mmx-cli](https://github.com/MiniMax-AI/cli)（工具调用时） |
-| OS | macOS / Linux / Windows（需 Node.js 18+） |
+| `MMX_BIN` | `/usr/local/bin/mmx` |
+| `MMX_OUT_DIR` | `/tmp/mmx-out` |
+| `MMX_CONTROL_FILE` | `/tmp/dsh-vision-control.json` |
+| `MMX_STATUS_FILE` | `/tmp/dsh-vision-status.json` |
+| `MMX_DEBUG_LOG` | `/tmp/dsh-mmx-multimodal-debug.log` |
 
-## 常见问题
+## 权限与数据（Permissions & Data）
+
+- **生成/桥接产物**：图片、视频、音频统一保存到 `MMX_OUT_DIR`（默认 `/tmp/mmx-out/`），经同源 `/mmx-files/` 提供（支持 Range、防目录穿越）。
+- **附件读取**：桥接时从 DSH 附件存储（`attachments/v1`）按内容寻址读取图片字节，**只读不写**。
+- **识别缓存写入**：只写回插件自建的 `bridge-*` 副本（位于 outDir 内）；**绝不修改** DSH 附件存储中的原始对象。
+- **缓存是明文**：内嵌 JSON 未加密，懂文件结构的人可读——请勿在图片中放入不宜展示的信息。
+- **重新编码即失效**：图片经社交平台转存/压缩/截图后，内嵌缓存因 sha256 不匹配自动失效，读取端显式告知而非静默返回旧数据。
+
+## 常见问题（Troubleshooting）
 
 <details>
 <summary><b>Q: 安装后看不到 mmx_bridge 工具？</b></summary>
@@ -102,25 +133,25 @@ dsh plugin --profile web rm dsh-mmx-bridge
 <details>
 <summary><b>Q: 拖入/粘贴图片还是报「当前模型不支持图片」？</b></summary>
 
-请确认插件已升级到 **v1.0.5+** 并**重启 dsh**（服务端 ESM 缓存不热替换）、强刷页面；再到 设置 → 插件 → 插件配置 确认「文本模型直接收图（图片桥）」为「已启用」。开启后拖图/粘贴图片发送：你的消息（图片＋提示词）在界面与会话中**原样保留**；发给 LLM 前插件把图片落盘到临时目录（默认 `/tmp/mmx-out/`）并替换为「图片地址＋本地路径」文本，Agent 自动调用 `read_image` / `mmx_bridge` 查看图片。本身支持图片输入的模型自动直通不受影响；需要原生行为时关闭该开关即可。
+请确认插件已升级到 **v1.0.5+** 并**重启 dsh**（服务端 ESM 缓存不热替换）、强刷页面；再到 设置 → 插件 → 插件配置 确认「图片桥」为「已启用」。本身支持图片输入的模型自动直通不受影响。
+</details>
+
+<details>
+<summary><b>Q: 图片识别缓存命中/失效是怎么工作的？</b></summary>
+
+识别结果以内嵌 JSON（PNG `tEXt`/JPEG `COM` 标准块）写回图片桥副本。同图同问题再次读取（`read_image` 或 `mmx_bridge(describe)`）直接复用并标注 `cached:true`，零 VLM 调用；不同问题（追问）各自分层缓存，互不覆盖；图片字节变化（重新编码）后缓存显式失效并自动重建。
 </details>
 
 <details>
 <summary><b>Q: 设置页「插件配置」看不到 dsh-mmx-bridge 管理卡片？</b></summary>
 
-DSH rc.7 起设置页按服务端注册的 settings 命名空间分发卡片，**需插件 ≥ 1.0.4**（1.0.4 起注册 `dsh-mmx-bridge` 命名空间）。确认安装版本 ≥ 1.0.4 并**重启 dsh**（服务端 ESM 缓存不热替换），再强刷 Web GUI 页面。
+需插件 **≥ 1.0.4** 并**重启 dsh**（服务端 ESM 缓存不热替换），再强刷 Web GUI 页面。
 </details>
 
 <details>
 <summary><b>Q: 图片生成报错 "API key not found"？</b></summary>
 
-需要先运行 `mmx auth login` 登录 MiniMax 账号。如果使用 Token Plan，确保套餐有效。
-</details>
-
-<details>
-<summary><b>Q: 视频生成失败？</b></summary>
-
-MiniMax 视频生成有队列限制，高峰期可能需要等待。检查 `mmx quota` 确认额度充足。
+先运行 `mmx auth login` 登录 MiniMax 账号。Token Plan 需确保套餐有效。
 </details>
 
 <details>
@@ -128,6 +159,38 @@ MiniMax 视频生成有队列限制，高峰期可能需要等待。检查 `mmx 
 
 mmx-cli 直连 MiniMax API（api.minimax.chat），国内一般可直连。如遇问题检查代理设置。
 </details>
+
+## 开发（Development）
+
+```bash
+git clone https://github.com/welsione/dsh-mmx-bridge.git
+cd dsh-mmx-bridge
+npm test                 # 单元测试（图片缓存 / read_image 包装，真实 PNG/JPEG）
+npm run check            # 语法检查（4 个 lib 文件）
+dsh plugin --profile web add .   # 本地安装测试
+```
+
+**架构**
+
+```
+用户对话 → DSH Agent → mmx_bridge 工具 → mmx-cli → MiniMax API
+                                                  ↓
+                                           /mmx-files/ 同源服务
+                                          （图片预览 / 音视频播放器）
+识别结果 → imgjson 块内嵌回写图片（PNG tEXt / JPEG COM）→ 下次同图同问直接复用
+```
+
+- **零 npm 运行时依赖**：仅使用 Node.js 内置模块
+- **同源产物服务**：生成的文件经 `/mmx-files/` 路径直接内嵌在对话中，支持 Range 请求
+- **Web GUI 增强**：图片预览、音频/视频播放器、设置页管理卡片自动加载
+
+## 许可证与安全（License & Security）
+
+- **MIT**：[LICENSE](LICENSE)
+- 不收集任何遥测；不读取系统凭据；不修改 DSH 附件存储
+- 内嵌识别缓存为**明文**，无需保密信息；按需在写回前自行加密
+
+---
 
 ## 相关项目
 
@@ -137,24 +200,6 @@ mmx-cli 直连 MiniMax API（api.minimax.chat），国内一般可直连。如�
 | [MiniMax CLI](https://github.com/MiniMax-AI/cli) | MiniMax 官方命令行工具 |
 | [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) | DSH 插件精选集（本插件已收录） |
 | [dsh-recommend](https://github.com/zp-home/dsh-recommend) | DSH 插件排行榜（本插件已收录） |
-
-## 贡献
-
-欢迎提 Issue 和 PR。开发流程：
-
-```bash
-git clone https://github.com/welsione/dsh-mmx-bridge.git
-cd dsh-mmx-bridge
-npm install
-npm run build        # 构建 lib/
-dsh plugin --profile web add .  # 本地安装测试
-```
-
-## 许可证
-
-[MIT](LICENSE)
-
----
 
 <p align="center">
   如果这个插件对你有帮助，欢迎给个 ⭐ Star 支持一下！
