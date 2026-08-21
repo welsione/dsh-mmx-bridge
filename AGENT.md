@@ -143,16 +143,19 @@ dsh plugin --profile web up dsh-mmx-bridge   # 或 cd ~/.dsh/profiles/web && pnp
 
 | 环境变量 | 默认值 | 说明 |
 | :-- | :-- | :-- |
-| `MMX_BIN` | `/usr/local/bin/mmx` | mmx 二进制路径 |
-| `MMX_OUT_DIR` | `/tmp/mmx-out` | 生成产物目录（经 `/mmx-files/<文件名>` 提供 HTTP 访问） |
-| `MMX_CONTROL_FILE` | `/tmp/dsh-vision-control.json` | 控制文件（开关/出图数） |
-| `MMX_STATUS_FILE` | `/tmp/dsh-vision-status.json` | 状态镜像文件 |
-| `MMX_DEBUG_LOG` | `/tmp/dsh-mmx-multimodal-debug.log` | 调试日志 |
+| `MMX_BIN` | 平台默认（macOS `/usr/local/bin/mmx`；Windows `mmx`） | mmx 二进制路径（运行时解析：控制文件 `mmxBin` > `MMX_BIN` > 自动扫描） |
+| `MMX_OUT_DIR` | 系统临时目录下 `mmx-out`（macOS/Linux 即 `/tmp/mmx-out`） | 生成产物目录（经 `/mmx-files/<文件名>` 提供 HTTP 访问） |
+| `MMX_CONTROL_FILE` | 系统临时目录下 `dsh-vision-control.json` | 控制文件（开关/出图数/mmx 路径） |
+| `MMX_STATUS_FILE` | 系统临时目录下 `dsh-vision-status.json` | 状态镜像文件 |
+| `MMX_DEBUG_LOG` | 系统临时目录下 `dsh-mmx-multimodal-debug.log` | 调试日志 |
+| `MMX_INSTALL_PATH` | `/api/mmx-bridge/install-mmx` | 一键安装 mmx-cli 路由 |
+| `MMX_LOGIN_PATH` | `/api/mmx-bridge/login-mmx` | api-key 一键登录路由 |
+| `MMX_AUTH_STATUS_PATH` | `/api/mmx-bridge/auth-status` | 登录状态查询路由 |
 
 控制文件字段：
 
 ```json
-{ "enabled": true, "count": 3, "webSearchEnabled": true, "readImageEnabled": true, "imageBridgeEnabled": true, "imageCacheEnabled": true }
+{ "enabled": true, "count": 3, "webSearchEnabled": true, "readImageEnabled": true, "imageBridgeEnabled": true, "imageCacheEnabled": true, "mmxBin": "" }
 ```
 
 - `enabled`：`mmx_bridge` 工具总开关
@@ -160,8 +163,9 @@ dsh plugin --profile web up dsh-mmx-bridge   # 或 cd ~/.dsh/profiles/web && pnp
 - `webSearchEnabled`：接管 `web_search`（mmx 版搜索）。**未配置时默认开启**，显式设为 `false` 才关闭
 - `readImageEnabled`：接管 `read_image`（VLM 文字描述，适合模型不支持图像输入的场合）。**未配置时默认开启**，显式设为 `false` 才关闭
 - `imageCacheEnabled`：识别缓存（识别结果内嵌写回图片，同图同问复用）。**未配置时默认开启**，显式设为 `false` 才关闭
+- `mmxBin`：mmx 可执行文件路径（留空/删除 = 自动扫描；设置卡「环境」区块可配置）
 
-开关也可在 Web GUI **设置 → 插件 → 插件配置** 中操作（1.0.2+ 内置管理面板卡片，直接随包提供，会写控制文件；无需额外安装面板插件）。
+开关与 mmx 环境管理（发现/配置/一键安装/api-key 登录）均可在 Web GUI **设置 → 插件 → 插件配置** 中操作（内置管理面板卡片，随包提供，会写控制文件；无需额外安装面板插件）。
 
 ## 8. 产物与 URL
 
@@ -181,7 +185,7 @@ dsh plugin --profile web up dsh-mmx-bridge   # 或 cd ~/.dsh/profiles/web && pnp
 | 工具出现两次 / 注册报 duplicate | bundle 自动挂载与手动挂载行并存：删除 `cordis.patch.yml` 中手动的 `mmx-bridge` 行，重启 |
 | 工具不在模型工具列表 | 重启后查日志 `tool registered`；无则查 `apply OK` 是否存在；确认挂载（bundles 列表或挂载行）与包安装 |
 | 状态文件 `ready: false` | 查 `MMX_DEBUG_LOG` 的 `tool init` 错误；`mmx auth status` 是否有效 |
-| 找不到 mmx 二进制 | 安装 `mmx-cli`；设 `MMX_BIN` 绝对路径 |
+| 找不到 mmx 二进制 | 设置页「环境」区块**一键安装 mmx-cli**，或填真实路径保存；也可设 `MMX_BIN` 绝对路径 |
 | 对话流无内嵌播放器/图片预览 | 刷新页面；历史消息点「加载更早」；确认 client bundle 200 |
 | `/mmx-files/*` 404 | 确认 `files route registered` 日志；文件是否在 `MMX_OUT_DIR` |
 | 修改插件不生效 | 重启 dsh（ESM 模块缓存），或 `pnpm up` 后再重启 |

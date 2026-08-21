@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- **mmx 环境管理（设置卡「环境」区块）**：mmx-cli 发现 / 配置 / 安装 / 登录全闭环
+  - **自动扫描**：按优先级解析 控制文件 `mmxBin`（设置卡配置）> 环境变量 `MMX_BIN` > 自动扫描（`command -v mmx` / `where mmx`、`/usr/local/bin/mmx`、`/opt/homebrew/bin/mmx`、npm 全局目录、Windows `%APPDATA%\npm\mmx.cmd` 等）
+  - **扫描不到 → 手动配置**：设置卡 mmx 路径输入框（校验存在性，无效 400），保存写入控制文件 `mmxBin`；留空保存 = 清除并重扫
+  - **未安装 → 一键安装**：`POST /api/mmx-bridge/install-mmx` 后台执行 `npm install -g mmx-cli`（跟随系统 npm 配置），安装状态进状态文件，成功自动重扫
+  - **未登录 → api-key 一键登录**：设置卡输入 API Key 点「登录」→ `mmx auth login --api-key`（Key 不落盘、不写日志、不回显）；`GET /api/mmx-bridge/auth-status` 实时查询登录状态
+  - 状态文件新增 `mmxFound / mmxSource / mmxLookupError / mmxInstall / mmxAuth`
+
+### Changed
+
+- **Windows 适配（尽力支持，未真机验证）**：默认路径改用 `os.tmpdir()`（macOS/Linux 仍为 `/tmp`，零回归）；`mkdir -p` 改 `mkdirSync(recursive)`；mmx 发现 win32 用 `where`；win32 spawn 改 `cmd.exe /d /s /c` + `windowsVerbatimArguments` 分支
+- **README 措辞修正**：兼容性表「运行时依赖」改为「Node 内置模块 + `@deepseek-ai` 生态 peer 包（宿主运行时提供）」；OS 行如实标注 macOS/Linux 一等支持、Windows 尽力支持
+
 ## [1.0.7] - 2026-08-20
 
 ### Features

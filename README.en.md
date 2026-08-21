@@ -35,9 +35,9 @@ DSH is text-only by default — **no images, no speech, no video**. `dsh-mmx-bri
 | Item | Details |
 |:--|:--|
 | DSH version | 0.1.0-rc.7+ (Web GUI profile) |
-| Runtime deps | Zero npm deps (Node builtins) |
-| External deps | [mmx-cli](https://github.com/MiniMax-AI/cli) (at call time) |
-| OS | macOS / Linux / Windows (Node.js 18+) |
+| Runtime deps | Node builtins + `@deepseek-ai` ecosystem peers (provided by the host at runtime); no third-party runtime deps |
+| External deps | [mmx-cli](https://github.com/MiniMax-AI/cli) (at call time; plugin supports auto-scan / custom path / one-click install / api-key login) |
+| OS | macOS / Linux (first-class); Windows best-effort (`os.tmpdir()` defaults, `where mmx` discovery, `cmd.exe` spawn branch adapted, not verified on real hardware) |
 
 ## Install / Uninstall
 
@@ -101,18 +101,31 @@ Everything is tunable via the Settings → Plugins → Plugin config card or the
 | `readImageEnabled` | `true` | route `read_image` through MiniMax VLM |
 | `imageBridgeEnabled` | `true` | image bridge: drop-to-send, save-to-disk before LLM call |
 | `imageCacheEnabled` | `true` | recognition cache: embed results back into the image, reuse on same image+question |
+| `mmxBin` | auto | path to the mmx executable (empty/remove = back to auto-scan) |
 
 > Missing keys fall back to defaults (set `false` to disable explicitly). Settings-page toggles write to the same file.
+
+### mmx environment management (Settings card → "Environment")
+
+The plugin closes the full mmx-cli discovery / config / install / login loop:
+
+1. **Auto-scan**: `control mmxBin` > env `MMX_BIN` > auto-scan (`command -v mmx` / `where mmx`, `/usr/local/bin/mmx`, `/opt/homebrew/bin/mmx`, npm global dir, …);
+2. **Not found → configure**: type a valid path in the card's "mmx path" field (validated for existence); save empty to clear and rescan;
+3. **Not installed → one-click install**: runs `npm install -g mmx-cli` (uses the system npm config), then rescans automatically;
+4. **Not logged in → api-key login**: paste a MiniMax API Key and hit Login (runs `mmx auth login --api-key` internally); **the key is never persisted, logged, or echoed**; "Login status" button queries `mmx auth status` live.
 
 ### Environment variables (MMX_*)
 
 | variable | default |
 |:--|:--|
-| `MMX_BIN` | `/usr/local/bin/mmx` |
-| `MMX_OUT_DIR` | `/tmp/mmx-out` |
-| `MMX_CONTROL_FILE` | `/tmp/dsh-vision-control.json` |
-| `MMX_STATUS_FILE` | `/tmp/dsh-vision-status.json` |
-| `MMX_DEBUG_LOG` | `/tmp/dsh-mmx-multimodal-debug.log` |
+| `MMX_BIN` | platform default (macOS `/usr/local/bin/mmx`; Windows `mmx`) |
+| `MMX_OUT_DIR` | `mmx-out` under the system temp dir (i.e. `/tmp/mmx-out` on macOS/Linux) |
+| `MMX_CONTROL_FILE` | `dsh-vision-control.json` under the system temp dir |
+| `MMX_STATUS_FILE` | `dsh-vision-status.json` under the system temp dir |
+| `MMX_DEBUG_LOG` | `dsh-mmx-multimodal-debug.log` under the system temp dir |
+| `MMX_INSTALL_PATH` | `/api/mmx-bridge/install-mmx` |
+| `MMX_LOGIN_PATH` | `/api/mmx-bridge/login-mmx` |
+| `MMX_AUTH_STATUS_PATH` | `/api/mmx-bridge/auth-status` |
 
 ## Permissions & Data
 
@@ -181,7 +194,7 @@ Recognition result → imgjson block embedded back into the image (PNG tEXt / JP
                   → same image + same question reuses it on the next read
 ```
 
-- **Zero npm runtime dependencies** — Node.js builtins only
+- **No third-party runtime deps** — Node builtins + `@deepseek-ai` ecosystem packages (host-provided)
 - **Same-origin media** — generated files served via `/mmx-files/` with inline preview
 - **Web GUI enhancement** — image preview, audio/video players, settings card auto-load
 

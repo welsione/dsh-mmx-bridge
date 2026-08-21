@@ -180,6 +180,48 @@ function check(name, ok, detail) {
   // 复位为缺省（删除键 = 默认开启）
   writeFileSync(process.env.MMX_CONTROL_FILE, JSON.stringify({ enabled: true, count: 3, imageBridgeEnabled: true }))
 }
+// 6) mmx 环境管理：状态字段 / set-config mmxBin 校验 / login 空 key 拒绝 / auth-status
+{
+  const s1 = JSON.parse(readFileSync(process.env.MMX_STATUS_FILE, 'utf8').trim().split('\n').filter(Boolean).pop())
+  check('status has mmx env fields', typeof s1.mmxFound === 'boolean' && ['none', 'config', 'scan'].indexOf(s1.mmxSource) >= 0, { mmxFound: s1.mmxFound, mmxSource: s1.mmxSource })
+  const setCfg = registeredRoutes.find((r) => r.kind === 'exact' && r.path === '/api/dsh-plugins/set-config')
+  const post = (route, payload) => new Promise((resolve) => {
+    const req = new EventEmitter(); req.method = 'POST'
+    req.on = (ev, cb) => { if (ev === 'data') cb(JSON.stringify(payload)); if (ev === 'end') process.nextTick(() => cb()) }
+    const res = { statusCode: 0, body: '', writeHead(c) { this.statusCode = c }, end(p) { if (p !== undefined) this.body += p; resolve({ code: this.statusCode, body: this.body }) } }
+    route.handler(req, res)
+  })
+  const bad = await post(setCfg, { mmxBin: join(TMP, 'no-such-mmx') })
+  check('set-config invalid mmxBin -> 400', bad.code === 400, { code: bad.code })
+  const valid = join(TMP, 'fake-mmx.sh')
+  writeFileSync(valid, '#!/bin/sh\necho fake\n')
+  const good = await post(setCfg, { mmxBin: valid })
+  check('set-config valid mmxBin -> 200', good.code === 200, { code: good.code })
+  const ctrlA = JSON.parse(readFileSync(process.env.MMX_CONTROL_FILE, 'utf8'))
+  check('control file stores mmxBin', ctrlA.mmxBin === valid, ctrlA.mmxBin)
+  const clear = await post(setCfg, { mmxBin: '' })
+  const ctrlB = JSON.parse(readFileSync(process.env.MMX_CONTROL_FILE, 'utf8'))
+  check('set-config empty mmxBin clears + rescan', clear.code === 200 && ctrlB.mmxBin === undefined, { code: clear.code, mmxBin: ctrlB.mmxBin })
+}
+// 7) login 空 apiKey -> 400（不触发真实 mmx）
+{
+  const loginRoute = registeredRoutes.find((r) => r.kind === 'exact' && r.path === '/api/mmx-bridge/login-mmx')
+  const req = new EventEmitter(); req.method = 'POST'
+  req.on = (ev, cb) => { if (ev === 'data') cb(JSON.stringify({ apiKey: '' })); if (ev === 'end') process.nextTick(() => cb()) }
+  const res = { statusCode: 0, body: '', writeHead(c) { this.statusCode = c }, end(p) { if (p !== undefined) this.body += p } }
+  await new Promise((resolve) => { loginRoute.handler(req, res); setTimeout(resolve, 150) })
+  check('login empty apiKey -> 400', res.statusCode === 400, { code: res.statusCode, body: (res.body || '').slice(0, 80) })
+}
+// 8) auth-status GET 返回结构化结果（mmx 可用时运行真实 CLI，超时兜底）
+{
+  const ar = registeredRoutes.find((r) => r.kind === 'exact' && r.path === '/api/mmx-bridge/auth-status')
+  const req = new EventEmitter(); req.method = 'GET'; req.url = ar.path
+  req.on = () => {}
+  const res = { statusCode: 0, body: '', writeHead(c) { this.statusCode = c }, end(p) { if (p !== undefined) this.body += p } }
+  await new Promise((resolve) => { ar.handler(req, res); setTimeout(resolve, 4000) })
+  const parsed = JSON.parse((res.body || '{}'))
+  check('auth-status returns structured result', ['no-mmx', 'ok', 'not-logged-in', 'error'].indexOf(parsed.state) >= 0, { state: parsed.state, code: res.statusCode })
+}
 
 console.log('\nread_image wrapper tests: ' + pass + ' passed / ' + fail + ' failed')
 process.exit(fail === 0 ? 0 : 1)

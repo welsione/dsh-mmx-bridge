@@ -35,9 +35,9 @@ DSH 默认只支持纯文本对话——**看不了图、画不了画、说不�
 | 项目 | 说明 |
 |:--|:--|
 | DSH 版本 | 0.1.0-rc.7+（Web GUI profile） |
-| 运行时依赖 | 仅 Node.js 内置模块（零 npm 运行时依赖） |
-| 外部依赖 | [mmx-cli](https://github.com/MiniMax-AI/cli)（工具调用时） |
-| OS | macOS / Linux / Windows（需 Node.js 18+） |
+| 运行时依赖 | Node 内置模块 + `@deepseek-ai` 生态 peer 包（宿主运行时提供），无第三方运行时依赖 |
+| 外部依赖 | [mmx-cli](https://github.com/MiniMax-AI/cli)（工具调用时；插件支持自动扫描 / 配置路径 / 一键安装 / api-key 一键登录） |
+| OS | macOS / Linux（一等支持）；Windows 尽力支持（`os.tmpdir` 默认路径、`where mmx` 发现、`cmd.exe` 启动分支已适配，未经真机验证） |
 
 ## 安装与卸载（Install / Uninstall）
 
@@ -101,18 +101,31 @@ dsh plugin --profile web rm dsh-mmx-bridge
 | `readImageEnabled` | `true` | `read_image` 改用 MiniMax VLM |
 | `imageBridgeEnabled` | `true` | 图片桥：拖图直发、发给 LLM 前落盘替换 |
 | `imageCacheEnabled` | `true` | 识别缓存：识别结果内嵌写回图片，同图同问复用 |
+| `mmxBin` | 自动 | mmx 可执行文件路径（留空/删除 = 回到自动扫描） |
 
 > 键缺省即按默认值（`false` 显式关闭）。设置页开关写入同一文件。
+
+### mmx 环境管理（设置卡「环境」区块）
+
+插件自动完成 mmx-cli 的**发现 / 配置 / 安装 / 登录**全闭环：
+
+1. **自动扫描**：按优先级探测 `控制文件 mmxBin` > `环境变量 MMX_BIN` > 自动扫描（`command -v mmx` / `where mmx`、`/usr/local/bin/mmx`、`/opt/homebrew/bin/mmx`、npm 全局目录等）；
+2. **扫描不到 → 手动配置**：设置卡「mmx 路径」输入真实路径保存（校验存在性），留空保存即清除、回到自动扫描；
+3. **未安装 → 一键安装**：设置卡一键执行 `npm install -g mmx-cli`（跟随系统 npm 配置），成功后自动重扫；
+4. **未登录 → api-key 一键登录**：设置卡输入 MiniMax API Key 点「登录」（内部执行 `mmx auth login --api-key`），**Key 不落盘、不写日志、不回显**；「登录状态」按钮实时查询 `mmx auth status`。
 
 ### 环境变量（MMX_*）
 
 | 变量 | 默认 |
 |:--|:--|
-| `MMX_BIN` | `/usr/local/bin/mmx` |
-| `MMX_OUT_DIR` | `/tmp/mmx-out` |
-| `MMX_CONTROL_FILE` | `/tmp/dsh-vision-control.json` |
-| `MMX_STATUS_FILE` | `/tmp/dsh-vision-status.json` |
-| `MMX_DEBUG_LOG` | `/tmp/dsh-mmx-multimodal-debug.log` |
+| `MMX_BIN` | 平台默认（macOS `/usr/local/bin/mmx`；Windows `mmx`） |
+| `MMX_OUT_DIR` | 系统临时目录下的 `mmx-out`（macOS/Linux 即 `/tmp/mmx-out`） |
+| `MMX_CONTROL_FILE` | 系统临时目录下的 `dsh-vision-control.json` |
+| `MMX_STATUS_FILE` | 系统临时目录下的 `dsh-vision-status.json` |
+| `MMX_DEBUG_LOG` | 系统临时目录下的 `dsh-mmx-multimodal-debug.log` |
+| `MMX_INSTALL_PATH` | `/api/mmx-bridge/install-mmx` |
+| `MMX_LOGIN_PATH` | `/api/mmx-bridge/login-mmx` |
+| `MMX_AUTH_STATUS_PATH` | `/api/mmx-bridge/auth-status` |
 
 ## 权限与数据（Permissions & Data）
 
@@ -180,7 +193,7 @@ dsh plugin --profile web add .   # 本地安装测试
 识别结果 → imgjson 块内嵌回写图片（PNG tEXt / JPEG COM）→ 下次同图同问直接复用
 ```
 
-- **零 npm 运行时依赖**：仅使用 Node.js 内置模块
+- **无第三方运行时依赖**：Node 内置模块 + `@deepseek-ai` 生态包（宿主运行时提供）
 - **同源产物服务**：生成的文件经 `/mmx-files/` 路径直接内嵌在对话中，支持 Range 请求
 - **Web GUI 增强**：图片预览、音频/视频播放器、设置页管理卡片自动加载
 
