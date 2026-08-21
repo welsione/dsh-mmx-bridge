@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         node: [18, 20, 22]
     steps:
       - uses: actions/checkout@v4
@@ -19,6 +19,11 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Syntax check
-        run: node --check lib/index.js && node --check lib/client.js
+        shell: bash
+        run: node --check lib/index.js && node --check lib/client.js && node --check lib/img-cache.js && node --check lib/imgjson.mjs
+      - name: Unit tests (cross-platform; PNG-based, no sips/npm deps needed)
+        shell: bash
+        run: npm test
       - name: Package smoke (dry-run)
+        shell: bash
         run: npm pack --dry-run
