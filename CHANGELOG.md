@@ -16,6 +16,7 @@
 
 - **Windows 适配（尽力支持，未真机验证）**：默认路径改用 `os.tmpdir()`（macOS/Linux 仍为 `/tmp`，零回归）；`mkdir -p` 改 `mkdirSync(recursive)`；mmx 发现 win32 用 `where`；win32 spawn 改 `cmd.exe /d /s /c` + `windowsVerbatimArguments` 分支
 - **一键安装绕开损坏的 npm/npm.cmd shim**：改用「运行 dsh 的 node」直跑自带 `npm-cli.js`（找不到才回退裸 `npm`）——修复 Windows 上 `Cannot find module …/npm-prefix.js` 类故障
+- **mmx 状态轮询即时重扫**：每次 `/api/mmx-bridge/status`（设置卡 5s 轮询）与 `mmx_env(status)` 做轻量重扫——运行中卸载/安装 mmx 后，页面「已就绪/未找到」立即反映，不再显示过期状态
 - **README 措辞修正**：兼容性表「运行时依赖」改为「Node 内置模块 + `@deepseek-ai` 生态 peer 包（宿主运行时提供）」；OS 行如实标注 macOS/Linux 一等支持、Windows 尽力支持
 
 ## [1.0.7] - 2026-08-20

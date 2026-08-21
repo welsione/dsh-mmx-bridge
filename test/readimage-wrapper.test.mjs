@@ -247,5 +247,22 @@ function check(name, ok, detail) {
   }
 }
 
+// 10) 状态轮询重扫：删除已配置的 mmx 文件后，再查 status 路由应重新扫描（不返回已删路径）
+{
+  const envTool2 = capturedTools.find((t) => t.name === 'mmx_env')
+  const gonePath = join(TMP, 'gone-mmx.sh')
+  writeFileSync(gonePath, '#!/bin/sh\necho ok\n')
+  await envTool2.execute({ action: 'set-path', path: gonePath }, { signal: undefined })
+  unlinkSync(gonePath) // 模拟用户卸载/删除该二进制
+  const statusRoute = registeredRoutes.find((r) => r.kind === 'exact' && r.path === '/api/mmx-bridge/status')
+  const req = new EventEmitter(); req.method = 'GET'; req.url = statusRoute.path; req.on = () => {}
+  const res = { statusCode: 0, body: '', writeHead(c) { this.statusCode = c }, end(p) { if (p !== undefined) this.body += p } }
+  await new Promise((resolve) => { statusRoute.handler(req, res); setTimeout(resolve, 300) })
+  const vis = JSON.parse((res.body || '{}')).vision || {}
+  const consistent = vis.mmx !== gonePath && (vis.mmxFound === !!vis.mmx)
+  check('status re-scans after mmx file removed (no stale path)', consistent, { mmx: vis.mmx, mmxFound: vis.mmxFound, gonePath })
+  await envTool2.execute({ action: 'set-path', path: '' }, { signal: undefined }) // 清理恢复自动扫描
+}
+
 console.log('\nread_image wrapper tests: ' + pass + ' passed / ' + fail + ' failed')
 process.exit(fail === 0 ? 0 : 1)
