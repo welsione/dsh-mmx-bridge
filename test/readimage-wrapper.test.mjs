@@ -179,6 +179,16 @@ function check(name, ok, detail) {
   check('set-enabled imagecache=false persisted', ctrl.imageCacheEnabled === false, ctrl)
   // 复位为缺省（删除键 = 默认开启）
   writeFileSync(process.env.MMX_CONTROL_FILE, JSON.stringify({ enabled: true, count: 3, imageBridgeEnabled: true }))
+  // #4 未知 plugin 必须 400，绝不默认落到 vision 误关总开关
+  const post2 = (payload) => new Promise((resolve) => {
+    const r2 = new EventEmitter(); r2.method = 'POST'
+    r2.on = (ev, cb) => { if (ev === 'data') cb(JSON.stringify(payload)); if (ev === 'end') process.nextTick(() => cb()) }
+    const r = { statusCode: 0, body: '', writeHead(c) { this.statusCode = c }, end(p) { if (p !== undefined) this.body += p; resolve({ code: this.statusCode, body: this.body }) } }
+    route.handler(r2, r)
+  })
+  const bad = await post2({ plugin: 'not-a-real-plugin', enabled: false })
+  const after = JSON.parse(readFileSync(process.env.MMX_CONTROL_FILE, 'utf8'))
+  check('set-enabled unknown plugin -> 400 (no master-switch clobber)', bad.code === 400 && after.enabled !== false, { code: bad.code, afterEnabled: after.enabled })
 }
 // 6) mmx 环境管理：状态字段 / set-config mmxBin 校验 / login 空 key 拒绝 / auth-status
 {
