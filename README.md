@@ -113,6 +113,7 @@ dsh plugin --profile web rm dsh-mmx-bridge
 2. **扫描不到 → 手动配置**：设置卡「mmx 路径」输入真实路径保存（校验存在性），留空保存即清除、回到自动扫描；
 3. **未安装 → 一键安装**：设置卡一键执行 `npm install -g mmx-cli`（跟随系统 npm 配置），成功后自动重扫；
 4. **未登录 → api-key 一键登录**：设置卡输入 MiniMax API Key 点「登录」（内部执行 `mmx auth login --api-key`），**Key 不落盘、不写日志、不回显**；「登录状态」按钮实时查询 `mmx auth status`。
+5. **模型自助修复（免去后台配置）**：新增 `mmx_env` 工具（`status / install / login / set-path`）。`mmx_bridge` 报「找不到 mmx / 未登录 / 命令错误」时，错误信息自带修复引导；Agent 先 `status` 自查原因，再 `install`（一键安装）、`login`（向用户索要 API Key 后登录，Key 不写进输出）、`set-path`（配置路径）现场修复，最后 `status` 确认——用户无需进设置页，只管对话。
 
 ### 环境变量（MMX_*）
 

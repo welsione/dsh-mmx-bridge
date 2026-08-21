@@ -10,10 +10,12 @@
   - **未安装 → 一键安装**：`POST /api/mmx-bridge/install-mmx` 后台执行 `npm install -g mmx-cli`（跟随系统 npm 配置），安装状态进状态文件，成功自动重扫
   - **未登录 → api-key 一键登录**：设置卡输入 API Key 点「登录」→ `mmx auth login --api-key`（Key 不落盘、不写日志、不回显）；`GET /api/mmx-bridge/auth-status` 实时查询登录状态
   - 状态文件新增 `mmxFound / mmxSource / mmxLookupError / mmxInstall / mmxAuth`
+- **模型自助修复（`mmx_env` 工具）**：`mmx_bridge` 报环境错误时错误信息自带引导；Agent 可调 `mmx_env`（`status/install/login/set-path`）自查并现场安装/登录/配置路径，用户在对话里即可完成配置（Key 不写进任何输出）
 
 ### Changed
 
 - **Windows 适配（尽力支持，未真机验证）**：默认路径改用 `os.tmpdir()`（macOS/Linux 仍为 `/tmp`，零回归）；`mkdir -p` 改 `mkdirSync(recursive)`；mmx 发现 win32 用 `where`；win32 spawn 改 `cmd.exe /d /s /c` + `windowsVerbatimArguments` 分支
+- **一键安装绕开损坏的 npm/npm.cmd shim**：改用「运行 dsh 的 node」直跑自带 `npm-cli.js`（找不到才回退裸 `npm`）——修复 Windows 上 `Cannot find module …/npm-prefix.js` 类故障
 - **README 措辞修正**：兼容性表「运行时依赖」改为「Node 内置模块 + `@deepseek-ai` 生态 peer 包（宿主运行时提供）」；OS 行如实标注 macOS/Linux 一等支持、Windows 尽力支持
 
 ## [1.0.7] - 2026-08-20

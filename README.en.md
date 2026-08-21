@@ -113,6 +113,7 @@ The plugin closes the full mmx-cli discovery / config / install / login loop:
 2. **Not found → configure**: type a valid path in the card's "mmx path" field (validated for existence); save empty to clear and rescan;
 3. **Not installed → one-click install**: runs `npm install -g mmx-cli` (uses the system npm config), then rescans automatically;
 4. **Not logged in → api-key login**: paste a MiniMax API Key and hit Login (runs `mmx auth login --api-key` internally); **the key is never persisted, logged, or echoed**; "Login status" button queries `mmx auth status` live.
+5. **Model self-healing (no manual config needed)**: a new `mmx_env` tool (`status / install / login / set-path`) is exposed to the agent. When `mmx_bridge` reports "mmx not found / not logged in / command error", the error message includes a fix hint; the agent can `status` to diagnose, then `install` (one-click), `login` (ask the user for an API Key — never echoed back), or `set-path` to fix it on the spot, and confirm with `status` — the user just keeps chatting.
 
 ### Environment variables (MMX_*)
 

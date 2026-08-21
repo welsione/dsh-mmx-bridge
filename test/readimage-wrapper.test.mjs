@@ -223,5 +223,29 @@ function check(name, ok, detail) {
   check('auth-status returns structured result', ['no-mmx', 'ok', 'not-logged-in', 'error'].indexOf(parsed.state) >= 0, { state: parsed.state, code: res.statusCode })
 }
 
+// 9) mmx_env 工具：Agent 自查 / 修复
+{
+  const envTool = capturedTools.find((t) => t.name === 'mmx_env')
+  check('mmx_env tool registered', !!envTool, envTool ? envTool.name : 'none')
+  if (envTool) {
+    const st = await envTool.execute({ action: 'status' }, { signal: undefined })
+    check('mmx_env status ok', st.ok === true && typeof st.mmxFound === 'boolean' && 'mmxAuth' in st, { ok: st.ok, mmxFound: st.mmxFound })
+    const noKey = await envTool.execute({ action: 'login', apiKey: '' }, { signal: undefined })
+    check('mmx_env login no key -> reminds model to ask user', noKey.ok === false && /apiKey/.test(noKey.error || ''), noKey)
+    const badPath = await envTool.execute({ action: 'set-path', path: join(TMP, 'definitely-missing-mmx') }, { signal: undefined })
+    check('mmx_env set-path invalid -> error', badPath.ok === false && /路径不存在/.test(badPath.error || ''), badPath)
+    const goodPath = join(TMP, 'good-mmx.sh')
+    writeFileSync(goodPath, '#!/bin/sh\necho ok\n')
+    const setPath = await envTool.execute({ action: 'set-path', path: goodPath }, { signal: undefined })
+    const ctrl = JSON.parse(readFileSync(process.env.MMX_CONTROL_FILE, 'utf8'))
+    check('mmx_env set-path valid -> ok + control', setPath.ok === true && ctrl.mmxBin === goodPath, { ok: setPath.ok, mmxBin: ctrl.mmxBin })
+    const clearPath = await envTool.execute({ action: 'set-path', path: '' }, { signal: undefined })
+    const ctrl2 = JSON.parse(readFileSync(process.env.MMX_CONTROL_FILE, 'utf8'))
+    check('mmx_env set-path empty -> clears + rescan', clearPath.ok === true && ctrl2.mmxBin === undefined, { ok: clearPath.ok })
+    const bad = await envTool.execute({ action: 'nope' }, { signal: undefined })
+    check('mmx_env unknown action -> error', bad.ok === false && /未知 action/.test(bad.error || ''), bad)
+  }
+}
+
 console.log('\nread_image wrapper tests: ' + pass + ' passed / ' + fail + ' failed')
 process.exit(fail === 0 ? 0 : 1)

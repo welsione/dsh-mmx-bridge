@@ -11,6 +11,7 @@
 `dsh-mmx-bridge` 是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）的 MiniMax 多模态插件：
 
 - 注册一个模型工具 `mmx_bridge`（describe / image / video / speech / music / cover / search / quota），底层调用 MiniMax 官方 [mmx CLI](https://github.com/MiniMax-AI/cli)（npm 包 `mmx-cli`）。
+- `mmx_env` 工具：Agent 自查/修复 mmx 环境（`status / install / login / set-path`）。`mmx_bridge` 报环境错误（未找到 mmx / 未登录 / 命令错误）时，错误信息自带引导提示，模型可现场安装/登录/配置路径完成自助修复——用户在对话里即可完成配置，无需进设置卡。
 - 自带**客户端增强**：对话流里工具卡片渲染内嵌播放器/缩略图；消息正文的 `/mmx-files/*` 链接自动升级为图片预览或音视频播放器（含下载按钮、加载失败提示）。
 - 可选**接管内置工具**：`web_search`（mmx 版搜索）、`read_image`（VLM 文字描述）。
 - **v1.0.5 聊天输入层图片桥（界面零改动）**：拖入/粘贴图片直接发送，你的消息（图片块＋提示词）在会话中**原样保留**。实现全在服务端、走 DSH 官方扩展点：
