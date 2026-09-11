@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.9] - 2026-09-11
+
+### Fixed
+
+- **设置卡深色模式修复（#1）**：按钮/开关/徽章不再用硬编码颜色与不存在的设计 token，全部对齐宿主 `--dsw-alias-*` 规范：
+  - **主按钮**：填充/边框改用 `--dsw-alias-button-primary-fill`，文字改用 `--dsw-alias-label-primary-foreground`；新增 `:hover` 专属规则（`--dsw-alias-button-primary-hover`）——此前 `.mmxb_action:hover`（双类优先级）会盖掉主按钮填充，浅色模式悬停时变成白字浅底不可读
+  - **「已启用」胶囊**：文字从硬编码 `#fff` 改为 `--dsw-alias-label-primary-foreground`——深色模式下 brand-primary 反转为近白，原白色文字隐形
+  - **开关旋钮**：从硬编码 `#fff` 改为 `--dsw-alias-label-primary-foreground`——深色模式下白色旋钮消失在近白轨道上
+  - **错误文字/徽章/工具卡提示**：`--dsw-alias-label-error` 在宿主主题中从未定义（会继承普通文字色），统一改用 `--dsw-alias-state-error-primary`（浅色 red-600 / 深色 red-400）
+  - 验证：宿主主题 CSS + 插件 CSS 双主题渲染，像素级断言浅/深两套「填充-文字」对比全部通过；宿主缺失 token 审计清零
+- **测试 mock 对齐宿主 `dsh-settings@0.1.5+`**（补 `settings.installSection`），`npm test` 恢复全绿（29+29）
+
 ## [1.0.8] - 2026-08-21
 
 ### Features

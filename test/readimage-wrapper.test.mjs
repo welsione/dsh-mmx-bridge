@@ -69,7 +69,7 @@ const ctx = {
   on() {},
   inject(deps, cb) {
     if (typeof cb === 'function') {
-      cb({ settings: { register: () => ({ get: () => ({}), watch: () => () => {} }) }, effect: () => () => {}, get: () => undefined })
+      cb({ settings: { register: () => ({ get: () => ({}), watch: () => () => {} }), installSection: () => () => {} }, effect: () => () => {}, get: () => undefined })
     }
     return () => {}
   },
@@ -150,7 +150,7 @@ function check(name, ok, detail) {
     on() {},
     inject(deps, cb) {
       if (typeof cb === 'function') {
-        cb({ settings: { register: () => ({ get: () => ({}), watch: () => () => {} }) }, effect: () => () => {}, get: () => undefined })
+        cb({ settings: { register: () => ({ get: () => ({}), watch: () => () => {} }), installSection: () => () => {} }, effect: () => () => {}, get: () => undefined })
       }
       return () => {}
     },
