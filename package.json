@@ -52,8 +52,8 @@
     "image-cache"
   ],
   "peerDependencies": {
-    "@deepseek-ai/dsh-settings": "^0.1.0-rc.7",
-    "@deepseek-ai/dsh-home-paths": "^0.1.0-rc.7",
+    "@deepseek-ai/dsh-settings": "^0.1.0-rc.7 || ^0.1.1-rc.1 || ^0.1.2-rc.1 || ^0.1.5-rc.1",
+    "@deepseek-ai/dsh-home-paths": "^0.1.0-rc.7 || ^0.1.1-rc.1 || ^0.1.2-rc.1 || ^0.1.5-rc.1",
     "react": "^18 || ^19"
   },
   "dependencies": {

@@ -34,7 +34,7 @@ DSH 默认只支持纯文本对话——**看不了图、画不了画、说不�
 
 | 项目 | 说明 |
 |:--|:--|
-| DSH 版本 | 0.1.0-rc.7+（Web GUI profile） |
+| DSH 版本 | 0.1.0-rc.7+（Web GUI profile）；已验证 0.1.0-rc.7 ~ 0.1.5-rc.2 |
 | 运行时依赖 | Node 内置模块 + `@deepseek-ai` 生态 peer 包（宿主运行时提供），无第三方运行时依赖 |
 | 外部依赖 | [mmx-cli](https://github.com/MiniMax-AI/cli)（工具调用时；插件支持自动扫描 / 配置路径 / 一键安装 / api-key 一键登录） |
 | OS | macOS / Linux（一等支持）；Windows 尽力支持（`os.tmpdir` 默认路径、`where mmx` 发现、`cmd.exe` 启动分支已适配，未经真机验证） |

@@ -4,6 +4,8 @@
 
 ### Fixed
 
+- **兼容 DSH 0.1.5-rc.2（最新版）**：`@deepseek-ai/dsh-settings` 自 0.1.2-rc.1 起移除了 legacy 自由函数 `installSettingsSection` / `settingsNamespace`（导出仅剩 `SettingsProvider`），ESM 命名导入缺失导出会在模块加载期抛 SyntaxError，插件在 rc.2 上整包无法加载。现改为 namespace 导入 + 运行时特性探测：旧版（0.1.0-rc.7 ~ 0.1.1-rc.x）走 legacy 自由函数，0.1.2-rc.1+（含 0.1.5-rc.1/rc.2）走 `SettingsProvider.installSection(owner, ns, ...)` 实例方法（签名自 0.1.2 起一致）
+- **peerDependencies 区间陷阱**：原 `^0.1.0-rc.7` 在严格 semver 下不满足任何后续预发布线（0.1.1-rc.x / 0.1.2-rc.x / 0.1.5-rc.x 均会 ERESOLVE）。改为多 `||` 分支 `^0.1.0-rc.7 || ^0.1.1-rc.1 || ^0.1.2-rc.1 || ^0.1.5-rc.1`，覆盖全部 0.1.x 预发布线与未来 0.1.x 稳定版
 - **设置卡深色模式修复（#1）**：按钮/开关/徽章不再用硬编码颜色与不存在的设计 token，全部对齐宿主 `--dsw-alias-*` 规范：
   - **主按钮**：填充/边框改用 `--dsw-alias-button-primary-fill`，文字改用 `--dsw-alias-label-primary-foreground`；新增 `:hover` 专属规则（`--dsw-alias-button-primary-hover`）——此前 `.mmxb_action:hover`（双类优先级）会盖掉主按钮填充，浅色模式悬停时变成白字浅底不可读
   - **「已启用」胶囊**：文字从硬编码 `#fff` 改为 `--dsw-alias-label-primary-foreground`——深色模式下 brand-primary 反转为近白，原白色文字隐形
@@ -11,6 +13,11 @@
   - **错误文字/徽章/工具卡提示**：`--dsw-alias-label-error` 在宿主主题中从未定义（会继承普通文字色），统一改用 `--dsw-alias-state-error-primary`（浅色 red-600 / 深色 red-400）
   - 验证：宿主主题 CSS + 插件 CSS 双主题渲染，像素级断言浅/深两套「填充-文字」对比全部通过；宿主缺失 token 审计清零
 - **测试 mock 对齐宿主 `dsh-settings@0.1.5+`**（补 `settings.installSection`），`npm test` 恢复全绿（29+29）
+
+### Verified
+
+- 隔离运行级实测（dsh-plugin-developer test.mjs）：**0.1.5-rc.1 与 0.1.5-rc.2 双版本各 15/15 PASS**——npm pack → tarball 安装 → bundle 注册 → 配置层标记 → profile 陷阱检查 → 启动冒烟（存活 ≥20s + HTTP 可达）→ `plugin ready` 标记 → 卸载清理
+- 设置页卡片分发（`settings.plugin.item` keyed slot）与 `__ModuleLoader__` 客户端加载契约在 rc.1/rc.2 逐字节一致（md5 比对），客户端无需改动
 
 ## [1.0.8] - 2026-08-21
 

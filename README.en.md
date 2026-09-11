@@ -34,7 +34,7 @@ DSH is text-only by default — **no images, no speech, no video**. `dsh-mmx-bri
 
 | Item | Details |
 |:--|:--|
-| DSH version | 0.1.0-rc.7+ (Web GUI profile) |
+| DSH version | 0.1.0-rc.7+ (Web GUI profile); verified 0.1.0-rc.7 ~ 0.1.5-rc.2 |
 | Runtime deps | Node builtins + `@deepseek-ai` ecosystem peers (provided by the host at runtime); no third-party runtime deps |
 | External deps | [mmx-cli](https://github.com/MiniMax-AI/cli) (at call time; plugin supports auto-scan / custom path / one-click install / api-key login) |
 | OS | macOS / Linux (first-class); Windows best-effort (`os.tmpdir()` defaults, `where mmx` discovery, `cmd.exe` spawn branch adapted, not verified on real hardware) |
