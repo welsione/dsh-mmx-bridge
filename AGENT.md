@@ -172,7 +172,7 @@ dsh plugin --profile web up dsh-mmx-bridge   # 或 cd ~/.dsh/profiles/web && pnp
 
 - 生成文件保存到 `MMX_OUT_DIR`，经 `http://<host>:<port>/mmx-files/<文件名>` 提供（同源、支持 HTTP Range、防目录穿越）。
 - 工具结果携带 `url`/`urls` 字段；图片文件名带时间戳前缀（`image-<ts>_001.jpg`），**每次生成唯一，历史链接不失效**。
-- 视频默认模型 Hailuo-2.3 输出无音轨；`duration`/`ratio` 参数需 MiniMax-H3（账号支持时）。
+- 视频默认模型 Hailuo-2.3（约 6 秒、16:9）输出无音轨；`duration`/`ratio` 仅 MiniMax-H3 支持，**传入时插件自动补 `--model MiniMax-H3`**（1.0.10 起，此前会直接报 CLI code 2）。Credits / Token Plan 账号不支持 H3 系列（服务器 2013），插件会翻译成可操作提示——对这类账号请省略 `duration`/`ratio`。可用 `model` 参数显式指定：MiniMax-Hailuo-2.3 / MiniMax-Hailuo-2.3-Fast（仅图生视频）/ MiniMax-H3 / MiniMax-H3-Max。
 
 ## 9. 故障排查
 

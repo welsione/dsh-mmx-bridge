@@ -78,12 +78,14 @@ One tool, the whole multimodal family. `mmx_bridge` dispatches on `action`:
 |:--|:--|:--|
 | `describe` | image understanding (VLM) | `image` + optional `prompt` (follow-up) |
 | `image` | text-to-image | `prompt` / `aspectRatio` / `count` |
-| `video` | text/image-to-video | `prompt` + optional `image` |
+| `video` | text/image-to-video | `prompt` / `image` / `duration` / `ratio` / `model` |
 | `speech` | text-to-speech | `text` / `voice` |
 | `music` | music generation | `prompt` / `lyrics` / `instrumental` |
 | `cover` | audio cover | `prompt` + `audio` reference |
 | `search` | web search | `q` |
 | `quota` | usage/balance query | — |
+
+> **Video params (since 1.0.10)**: `duration` / `ratio` are only supported by `MiniMax-H3`; passing either auto-selects H3 (or set `model` explicitly: `MiniMax-Hailuo-2.3` default / `MiniMax-Hailuo-2.3-Fast` (i2v only) / `MiniMax-H3` / `MiniMax-H3-Max`). Note that MiniMax **Credits / Token Plan accounts do not cover the H3 series** — H3 requests fail with error 2013; the bridge translates that into an actionable message. On Credits, omit `duration`/`ratio`: the Hailuo-2.3 default yields ~6 s, 16:9.
 
 Just ask the agent in plain language: **"describe this image"**, **"generate a cyberpunk cat"**, **"turn this text into speech"**.
 

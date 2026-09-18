@@ -78,12 +78,14 @@ dsh plugin --profile web rm dsh-mmx-bridge
 |:--|:--|:--|
 | `describe` | 图片理解（VLM） | `image`＋可选 `prompt`（追问） |
 | `image` | 文生图 | `prompt` / `aspectRatio` / `count` |
-| `video` | 文/图生视频 | `prompt` + 可选 `image` |
+| `video` | 文/图生视频 | `prompt` / `image` / `duration` / `ratio` / `model` |
 | `speech` | 语音合成 | `text` / `voice` |
 | `music` | 音乐生成 | `prompt` / `lyrics` / `instrumental` |
 | `cover` | 音频翻唱 | `prompt` + `audio` 参考音频 |
 | `search` | 联网搜索 | `q` |
 | `quota` | 用量查询 | — |
+
+> **视频参数说明（1.0.10 起）**：`duration` / `ratio` 仅 `MiniMax-H3` 支持，传入时会自动选用 H3（也可用 `model` 显式指定：`MiniMax-Hailuo-2.3` 默认 / `MiniMax-Hailuo-2.3-Fast`（仅图生视频）/ `MiniMax-H3` / `MiniMax-H3-Max`）。注意 MiniMax 的 Credits / Token Plan 账号**不支持 H3 系列**——H3 请求会报 2013 错误；插件已把该报错翻译成可操作提示。Credits 账号请省略 `duration`/`ratio`，默认 Hailuo-2.3 输出约 6 秒、16:9。
 
 聊天里直接对 Agent 说即可，例如：**「描述这张图片」**、**「生成一张赛博朋克猫的图」**、**「把这段文字变成语音」**。
 

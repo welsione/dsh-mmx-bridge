@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.10] - 2026-09-18
+
+### Fixed
+
+- **video：传 `duration`/`ratio` 必失败（#2）**：mmx CLI 的 `--duration` / `--ratio` 仅 `MiniMax-H3` 接受，而 `handleVideo` 只推标志不推 `--model`，CLI 以 code 2 拒绝（`--reference-image, --reference-video, --reference-audio, --duration, and --ratio require --model MiniMax-H3.`）。现在传了 `duration`/`ratio` 而未显式指定模型时自动补 `--model MiniMax-H3`；argv 构造/冲突预检/报错翻译拆到新纯函数模块 `lib/video-args.js`（零依赖，24 项单测）
+
+### Features
+
+- **video 新增可选 `model` 参数**：`MiniMax-Hailuo-2.3`（默认）| `MiniMax-Hailuo-2.3-Fast`（仅图生视频，需 `image`）| `MiniMax-H3` | `MiniMax-H3-Max`，大小写不敏感归一。显式模型与 `duration`/`ratio` 冲突（非 H3，CLI 对 H3-Max/legacy 同样拒绝这两标志）时**预检报错**并给出两条出路，而不是把注定失败的命令发给 CLI
+- **2013 报错可操作化（#2 附加发现）**：Credits / Token Plan 账号不支持 H3 系列（服务器 `TokenPlan or Credit does not currently support MiniMax-H3 series models (2013) (HTTP 400)`）。命中该模式时在原始报错后附中文提示：去掉 `duration`/`ratio` 用默认 Hailuo-2.3（约 6 秒、16:9），或改用支持 H3 的账号/计费方式
+- **文档**：README（中/英）action 表补 `duration`/`ratio`/`model` 并新增「视频参数说明」注（含 Credits 限制）；AGENT.md 同步
+
+### Verified
+
+- `mmx video generate --dry-run`（mmx-cli 1.0.19 实测）：桥接构造的 argv 在 duration/ratio 组合下产出 `{"request":{"model":"MiniMax-H3",...,"resolution":"2K","duration":6,"ratio":"16:9"}}`，与 issue 报告的预期请求体一致；无标志时保持 CLI 默认 `MiniMax-Hailuo-2.3`
+
 ## [1.0.9] - 2026-09-11
 
 ### Fixed
